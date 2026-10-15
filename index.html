@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DeutschProfi — Полная интерактивная платформа немецкого языка (A1–B2)</title>
+  <title>DeutschProfi — Интерактивная платформа немецкого языка (A1–B2)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,7 +13,6 @@
       background-color: #f7f7f7;
       user-select: none;
     }
-    /* Тактильные 3D-кнопки в стиле Duolingo */
     .btn-duo-green {
       background-color: #58cc02;
       box-shadow: 0 4px 0 #58a700;
@@ -32,23 +31,6 @@
     .btn-duo-blue:hover { background-color: #2bd5ff; }
     .btn-duo-blue:active { transform: translateY(4px); box-shadow: 0 0px 0 #1899d6; }
 
-    .btn-duo-yellow {
-      background-color: #ffc800;
-      box-shadow: 0 4px 0 #e5a400;
-      color: #4b4b4b;
-      transition: all 0.1s;
-    }
-    .btn-duo-yellow:hover { background-color: #ffd426; }
-    .btn-duo-yellow:active { transform: translateY(4px); box-shadow: 0 0px 0 #e5a400; }
-
-    .btn-duo-purple {
-      background-color: #ce82ff;
-      box-shadow: 0 4px 0 #a559d9;
-      color: white;
-      transition: all 0.1s;
-    }
-    .btn-duo-purple:active { transform: translateY(4px); box-shadow: 0 0px 0 #a559d9; }
-
     .btn-duo-gray {
       background-color: #ffffff;
       border: 2px solid #e5e5e5;
@@ -65,37 +47,13 @@
       border-radius: 1.25rem;
       box-shadow: 0 4px 0 #e5e5e5;
     }
-
-    /* 3D Переворот флеш-карт */
-    .perspective { perspective: 1000px; }
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-    .flipped .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 1.5rem;
-    }
-    .flip-card-back {
-      transform: rotateY(180deg);
-    }
   </style>
 </head>
 <body class="text-gray-800 h-screen flex overflow-hidden">
 
-  <!-- Боковая панель навигации -->
+  <!-- Боковая панель -->
   <aside class="w-64 bg-white border-r-2 border-gray-200 flex flex-col justify-between z-20 shrink-0">
     <div>
-      <!-- Логотип -->
       <div class="p-6 flex items-center space-x-3 border-b-2 border-gray-100">
         <div class="w-11 h-11 rounded-2xl bg-[#58cc02] flex items-center justify-center text-white font-black text-2xl shadow-[0_4px_0_#58a700]">
           🇩🇪
@@ -106,231 +64,200 @@
         </div>
       </div>
 
-      <!-- Меню -->
       <nav class="p-4 space-y-2">
         <button onclick="switchTab('path')" id="nav-path" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider bg-blue-50 text-[#1cb0f6] border-2 border-[#1cb0f6]">
           <i class="fa-solid fa-map-location-dot text-xl w-6 text-center"></i>
-          <span>Карта уроков (12)</span>
-        </button>
-        <button onclick="switchTab('verbs')" id="nav-verbs" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
-          <i class="fa-solid fa-dumbbell text-xl w-6 text-center text-orange-500"></i>
-          <span>Сильные глаголы</span>
-        </button>
-        <button onclick="switchTab('grammar')" id="nav-grammar" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
-          <i class="fa-solid fa-book-bookmark text-xl w-6 text-center text-purple-500"></i>
-          <span>Грамматика А-Я</span>
-        </button>
-        <button onclick="switchTab('phonetics')" id="nav-phonetics" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
-          <i class="fa-solid fa-volume-high text-xl w-6 text-center text-green-500"></i>
-          <span>Фонетика и Чтение</span>
+          <span>Карта уроков</span>
         </button>
       </nav>
     </div>
 
-    <!-- Прогресс внизу сайдбара -->
     <div class="p-4 m-4 bg-gray-50 rounded-2xl border-2 border-gray-200">
       <div class="text-xs font-extrabold uppercase text-gray-400 mb-2">Прогресс учебника</div>
       <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden mb-2">
         <div id="sidebar-progress-bar" class="bg-[#58cc02] h-full transition-all duration-500" style="width: 0%"></div>
       </div>
       <div class="flex justify-between items-center text-xs font-bold text-gray-600">
-        <span id="sidebar-completed-text">0 из 12 тем</span>
+        <span id="sidebar-completed-text">0 из 2 тем</span>
         <button onclick="resetProgress()" class="text-red-400 hover:underline">Сбросить</button>
       </div>
     </div>
   </aside>
 
-  <!-- Основная рабочая область -->
+  <!-- Основная область -->
   <div class="flex-1 flex flex-col h-screen overflow-hidden">
-    <!-- Верхний бар со статистикой -->
     <header class="h-16 bg-white border-b-2 border-gray-200 px-8 flex items-center justify-between shrink-0 z-10">
       <div class="flex items-center space-x-2">
-        <button onclick="filterLevel('ALL')" id="lvl-ALL" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-gray-800 text-white">Все (12)</button>
-        <button onclick="filterLevel('A1')" id="lvl-A1" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-green-100 text-green-700 hover:bg-green-200">A1</button>
-        <button onclick="filterLevel('A2')" id="lvl-A2" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-amber-100 text-amber-700 hover:bg-amber-200">A2</button>
-        <button onclick="filterLevel('B1')" id="lvl-B1" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-purple-100 text-purple-700 hover:bg-purple-200">B1</button>
-        <button onclick="filterLevel('B2')" id="lvl-B2" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-pink-100 text-pink-700 hover:bg-pink-200">B2</button>
+        <span class="font-black text-lg text-gray-700" id="header-title">Главное меню</span>
       </div>
 
       <div class="flex items-center space-x-6">
-        <!-- Ударный режим -->
-        <div class="flex items-center space-x-2 font-extrabold text-orange-500" title="Ударный режим (дни подряд)">
+        <div class="flex items-center space-x-2 font-extrabold text-orange-500">
           <i class="fa-solid fa-fire text-xl"></i>
           <span id="stat-streak">5</span>
         </div>
-        <!-- Очки опыта XP -->
-        <div class="flex items-center space-x-2 font-extrabold text-[#ffc800]" title="Очки опыта (XP)">
+        <div class="flex items-center space-x-2 font-extrabold text-[#ffc800]">
           <i class="fa-solid fa-bolt text-xl"></i>
           <span id="stat-xp">250</span><span>XP</span>
         </div>
-        <!-- Жизни -->
-        <div class="flex items-center space-x-2 font-extrabold text-red-500" title="Запас сердец (нажмите для восстановления)" onclick="restoreHearts()">
-          <i class="fa-solid fa-heart text-xl cursor-pointer"></i>
+        <div class="flex items-center space-x-2 font-extrabold text-red-500">
+          <i class="fa-solid fa-heart text-xl"></i>
           <span id="stat-hearts">5</span>
         </div>
-        <!-- Кнопка проверки звука -->
-        <button onclick="speakGerman('Willkommen bei DeutschProfi! Viel Erfolg beim Lernen!')" class="btn-duo-gray px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center space-x-2">
-          <i class="fa-solid fa-headphones text-[#1cb0f6]"></i>
-          <span>Проверка звука</span>
-        </button>
       </div>
     </header>
 
-    <!-- Контент вкладок -->
-    <main id="main-container" class="flex-1 overflow-y-auto p-6 md:p-10">
-      <!-- Рендерится динамически -->
+    <main id="main-container" class="flex-1 overflow-y-auto p-6 md:p-10 bg-gray-50">
+      <!-- Сюда динамически грузится контент -->
     </main>
   </div>
 
 <script>
-// Глобальные переменные состояния
-let currentTab = 'path';
-let currentLevelFilter = 'ALL';
 let xp = 250;
 let hearts = 5;
 let streak = 5;
 let completedModules = JSON.parse(localStorage.getItem('dp_completed') || '[]');
 
-// Данные уроков
 const MODULES = [
   {
     id: "a1_1",
     level: "A1",
-    title: "Урок 1: Знакомство, О себе, Спряжение и sein / haben",
-    subtitle: "Приветствия, личные местоимения, числа, правило V2",
+    title: "Урок 1: Знакомство и глаголы sein / haben",
+    subtitle: "Приветствия, личные местоимения, правило V2",
     color: "#58cc02",
     icon: "fa-handshake",
-    grammarHTML: `
-      <div class="space-y-4">
-        <div class="bg-green-50 border-l-4 border-[#58cc02] p-4 rounded-r-xl">
-          <h4 class="font-black text-green-900 mb-1">1. Спряжение глаголов в Präsens</h4>
-          <p class="text-sm text-green-800">Убираем окончание <b>-en</b> и добавляем окончания: ich -e, du -st, er/sie/es -t, wir -en, ihr -t, sie/Sie -en.</p>
-        </div>
-        <div class="bg-blue-50 border-l-4 border-[#1cb0f6] p-4 rounded-r-xl text-sm text-blue-900">
-          <b>2. Порядок слов (Правило V2):</b> Спрягаемый глагол всегда стоит на 2-м месте в повествовательном предложении.
-        </div>
-      </div>
-    `,
+    theory: "В немецком языке глаголы-связки sein (быть) и haben (иметь) спрягаются особым образом. Главное правило порядка слов (V2) требует, чтобы спрягаемый глагол всегда стоял на втором месте в предложении.",
     vocab: [
-      { de: "heißen", ru: "зваться, называться", ex: "Wie heißen Sie? Ich heiße Markus." },
-      { de: "kommen", ru: "приходить, быть родом", ex: "Woher kommst du? Ich komme aus der Ukraine." },
-      { de: "wohnen", ru: "жить, проживать", ex: "Wir wohnen jetzt in München." }
+      { de: "heißen", ru: "зваться, называться" },
+      { de: "kommen", ru: "приходить, быть родом" },
+      { de: "wohnen", ru: "жить, проживать" }
     ],
-    dialogues: [
-      { speaker: "Anna", de: "Guten Tag! Ich heiße Anna.", ru: "Добрый день! Меня зовут Анна." },
-      { speaker: "Thomas", de: "Guten Tag! Freut mich sehr!", ru: "Добрый день! Очень приятно!" }
-    ],
-    grammarQuestions: [
-      { type: "mc", q: "Выберите форму sein: «Ich ___ 22 Jahre alt.»", options: ["bin", "bist", "ist", "sind"], a: "bin", exp: "С ich используется bin." },
-      { type: "mc", q: "Выберите форму: «Woher ___ du?»", options: ["komme", "kommst", "kommt", "kommen"], a: "kommst", exp: "Для du окончание -st." }
-    ]
+    question: {
+      q: "Выберите правильную форму глагола sein: «Ich ___ 22 Jahre alt.»",
+      options: ["bin", "bist", "ist", "sind"],
+      a: "bin"
+    }
   },
   {
     id: "a1_2",
     level: "A1",
-    title: "Урок 2: Семья, Еда, Покупки и Akkusativ",
-    subtitle: "Определенный и неопределенный артикль в Винительном падеже",
+    title: "Урок 2: Покупки и Винительный падеж (Akkusativ)",
+    subtitle: "Определенный и неопределенный артикль в Akkusativ",
     color: "#38bdf8",
     icon: "fa-cart-shopping",
-    grammarHTML: `
-      <div class="space-y-4">
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
-          <h4 class="font-black text-blue-900 mb-1">Винительный падеж (Akkusativ)</h4>
-          <p class="text-sm text-blue-800">В Akkusativ изменяется только мужской род: der -> den, ein -> einen, kein -> keinen.</p>
-        </div>
-      </div>
-    `,
+    theory: "Винительный падеж (Akkusativ) отвечает на вопросы Wen? Was? (Кого? Что?). Изменяется только артикль мужского рода: der превращается в den, ein в einen.",
     vocab: [
-      { de: "kaufen", ru: "покупать", ex: "Ich kaufe einen Apfel." },
-      { de: "brauchen", ru: "нуждаться", ex: "Wir brauchen Hilfe." }
+      { de: "kaufen", ru: "покупать" },
+      { de: "brauchen", ru: "нуждаться" }
     ],
-    dialogues: [
-      { speaker: "Kunde", de: "Ich hätte gerne einen Kaffee.", ru: "Я бы хотел кофе." }
-    ],
-    grammarQuestions: [
-      { type: "mc", q: "Выберите правильный артикль: «Ich trinke ___ Kaffee (m).»", options: ["einen", "eine", "ein", "der"], a: "einen", exp: "В Akkusativ мужской род принимает einen." }
-    ]
+    question: {
+      q: "Выберите правильный артикль: «Ich trinke ___ Kaffee (m).»",
+      options: ["einen", "eine", "ein", "der"],
+      a: "einen"
+    }
   }
 ];
 
-// Функция переключения вкладок
 function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('aside nav button').forEach(btn => {
-    btn.className = "w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent";
-  });
-  const activeBtn = document.getElementById('nav-' + tab);
-  if (activeBtn) {
-    activeBtn.className = "w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider bg-blue-50 text-[#1cb0f6] border-2 border-[#1cb0f6]";
-  }
-  renderContent();
+  renderPath();
 }
 
-function filterLevel(lvl) {
-  currentLevelFilter = lvl;
-  ['ALL', 'A1', 'A2', 'B1', 'B2'].forEach(l => {
-    const b = document.getElementById('lvl-' + l);
-    if(b) {
-      if(l === lvl) b.className = "px-3 py-1 rounded-lg font-black text-xs uppercase bg-gray-800 text-white";
-      else b.className = "px-3 py-1 rounded-lg font-black text-xs uppercase bg-gray-200 text-gray-700 hover:bg-gray-300";
-    }
-  });
-  renderContent();
-}
-
-function renderContent() {
+function renderPath() {
+  document.getElementById('header-title').innerText = "Карта уроков немецкого языка";
   const container = document.getElementById('main-container');
-  if (!container) return;
-
-  if (currentTab === 'path') {
-    let html = `<div class="max-w-3xl mx-auto space-y-6"><h2 class="text-2xl font-black mb-4">Карта уроков немецкого языка</h2>`;
-    MODULES.forEach((m, idx) => {
-      if (currentLevelFilter !== 'ALL' && m.level !== currentLevelFilter) return;
-      const isDone = completedModules.includes(m.id);
-      html += `
-        <div class="card-duo p-6 flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-md" style="background-color: ${m.color}">
-              <i class="fa-solid ${m.icon}"></i>
-            </div>
-            <div>
-              <span class="text-xs font-black px-2 py-0.5 rounded bg-gray-100 text-gray-600">${m.level}</span>
-              <h3 class="font-black text-lg text-gray-800 mt-1">${m.title}</h3>
-              <p class="text-xs text-gray-500 mt-0.5">${m.subtitle}</p>
-            </div>
+  let html = `<div class="max-w-3xl mx-auto space-y-6">`;
+  
+  MODULES.forEach((m) => {
+    const isDone = completedModules.includes(m.id);
+    html += `
+      <div class="card-duo p-6 flex items-center justify-between bg-white">
+        <div class="flex items-center space-x-4">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-md" style="background-color: ${m.color}">
+            <i class="fa-solid ${m.icon}"></i>
           </div>
-          <button onclick="alert('Урок открыт!')" class="btn-duo-green px-6 py-2.5 rounded-xl font-black text-sm uppercase">
-            ${isDone ? 'Повторить' : 'Начать'}
-          </button>
+          <div>
+            <span class="text-xs font-black px-2 py-0.5 rounded bg-gray-100 text-gray-600">${m.level}</span>
+            <h3 class="font-black text-lg text-gray-800 mt-1">${m.title}</h3>
+            <p class="text-xs text-gray-500 mt-0.5">${m.subtitle}</p>
+          </div>
         </div>
-      `;
-    });
-    html += `</div>`;
-    container.innerHTML = html;
+        <button onclick="startLesson('${m.id}')" class="btn-duo-green px-6 py-2.5 rounded-xl font-black text-sm uppercase">
+          ${isDone ? 'Повторить' : 'Начать'}
+        </button>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function startLesson(id) {
+  const m = MODULES.find(item => item.id === id);
+  document.getElementById('header-title').innerText = m.title;
+  const container = document.getElementById('main-container');
+
+  let vocabHtml = m.vocab.map(v => `
+    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-200">
+      <span class="font-bold text-gray-800">${v.de}</span>
+      <span class="text-gray-500 text-sm">${v.ru}</span>
+      <button onclick="speak('${v.de}')" class="text-[#1cb0f6]"><i class="fa-solid fa-volume-high"></i></button>
+    </div>
+  `).join('');
+
+  let optionsHtml = m.question.options.map(opt => `
+    <button onclick="checkAnswer('${opt}', '${m.question.a}', '${m.id}')" class="w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-[#1cb0f6] font-bold bg-white shadow-sm transition">${opt}</button>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="max-w-2xl mx-auto space-y-6">
+      <button onclick="renderPath()" class="text-gray-500 font-bold hover:underline mb-4"><i class="fa-solid fa-arrow-left"></i> Назад к карте</button>
+      
+      <div class="card-duo p-6 bg-white space-y-4">
+        <h3 class="font-black text-xl text-gray-800">📖 Теория</h3>
+        <p class="text-gray-600 leading-relaxed">${m.theory}</p>
+      </div>
+
+      <div class="card-duo p-6 bg-white space-y-3">
+        <h3 class="font-black text-xl text-gray-800">🗣 Словарь урока</h3>
+        <div class="space-y-2">${vocabHtml}</div>
+      </div>
+
+      <div class="card-duo p-6 bg-white space-y-4" id="quiz-box">
+        <h3 class="font-black text-xl text-gray-800">✍️ Проверка знаний</h3>
+        <p class="font-bold text-gray-700 text-lg">${m.question.q}</p>
+        <div class="space-y-2">${optionsHtml}</div>
+      </div>
+    </div>
+  `;
+}
+
+function checkAnswer(selected, correct, id) {
+  const box = document.getElementById('quiz-box');
+  if (selected === correct) {
+    if (!completedModules.includes(id)) {
+      completedModules.push(id);
+      localStorage.setItem('dp_completed', JSON.stringify(completedModules));
+      xp += 15;
+      updateStats();
+    }
+    box.innerHTML = `
+      <div class="p-6 bg-green-50 border-2 border-green-500 rounded-2xl text-center space-y-4">
+        <h3 class="font-black text-2xl text-green-700">🎉 Правильно! +15 XP</h3>
+        <button onclick="renderPath()" class="btn-duo-green px-8 py-3 rounded-xl font-black uppercase">Продолжить</button>
+      </div>
+    `;
   } else {
-    container.innerHTML = `<div class="text-center py-20 text-gray-400 font-bold">Раздел в разработке</div>`;
+    hearts = Math.max(0, hearts - 1);
+    updateStats();
+    alert('Неправильно! Попробуй еще раз.');
   }
 }
 
-function speakGerman(text) {
+function speak(text) {
   if ('speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'de-DE';
-    window.speechSynthesis.speak(utterance);
-  }
-}
-
-function restoreHearts() {
-  hearts = 5;
-  updateStats();
-  alert('Сердца восстановлены!');
-}
-
-function resetProgress() {
-  if(confirm('Сбросить весь прогресс?')) {
-    completedModules = [];
-    localStorage.removeItem('dp_completed');
-    renderContent();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    window.speechSynthesis.speak(u);
   }
 }
 
@@ -343,9 +270,8 @@ function updateStats() {
   document.getElementById('sidebar-completed-text').innerText = `${completedModules.length} из ${MODULES.length} тем`;
 }
 
-// Инициализация при загрузке
 window.onload = function() {
-  renderContent();
+  renderPath();
   updateStats();
 };
 </script>
