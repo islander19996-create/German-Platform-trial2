@@ -183,112 +183,171 @@
   </div>
 
 <script>
-// ============================================================================
-// 1. ПОЛНАЯ ПРОГРАММА ШКОЛЬНОГО И УНИВЕРСИТЕТСКОГО КУРСА (12 МОДУЛЕЙ: A1 -> B2)
-// ============================================================================
+// Глобальные переменные состояния
+let currentTab = 'path';
+let currentLevelFilter = 'ALL';
+let xp = 250;
+let hearts = 5;
+let streak = 5;
+let completedModules = JSON.parse(localStorage.getItem('dp_completed') || '[]');
+
+// Данные уроков
 const MODULES = [
-  // ======================= УРОВЕНЬ A1 =======================
   {
     id: "a1_1",
     level: "A1",
-    title: "Урок 1: Знакомство, О себе, Спряжение в Präsens и глаголы sein / haben",
-    subtitle: "Приветствия, личные местоимения, числа, страны, профессии и железное правило V2",
+    title: "Урок 1: Знакомство, О себе, Спряжение и sein / haben",
+    subtitle: "Приветствия, личные местоимения, числа, правило V2",
     color: "#58cc02",
     icon: "fa-handshake",
     grammarHTML: `
       <div class="space-y-4">
         <div class="bg-green-50 border-l-4 border-[#58cc02] p-4 rounded-r-xl">
-          <h4 class="font-black text-green-900 mb-1">1. Спряжение глаголов в настоящем времени (Präsens)</h4>
-          <p class="text-sm text-green-800">Убираем окончание инфинитива <b>-en</b> (<i>lern-en → lern-</i>) и добавляем личные окончания: <b>ich -e, du -st, er/sie/es -t, wir -en, ihr -t, sie/Sie -en</b>. Ключевые глаголы-связки <b>sein</b> (быть) и <b>haben</b> (иметь) нужно знать наизусть:</p>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse card-duo overflow-hidden text-sm font-semibold">
-            <thead>
-              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
-                <th class="p-3">Лицо</th><th class="p-3">wohnen (жить)</th><th class="p-3">sprechen (e → i)</th><th class="p-3">sein (быть)</th><th class="p-3">haben (иметь)</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">ich</td><td class="p-2.5">wohn<b>e</b></td><td class="p-2.5">sprech<b>e</b></td><td class="p-2.5 font-black">bin</td><td class="p-2.5 font-black">habe</td></tr>
-              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">du</td><td class="p-2.5">wohn<b>st</b></td><td class="p-2.5 text-red-600 font-black">sprichst</td><td class="p-2.5 font-black">bist</td><td class="p-2.5 font-black">hast</td></tr>
-              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">er/sie/es</td><td class="p-2.5">wohn<b>t</b></td><td class="p-2.5 text-red-600 font-black">spricht</td><td class="p-2.5 font-black">ist</td><td class="p-2.5 font-black">hat</td></tr>
-              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">wir</td><td class="p-2.5">wohn<b>en</b></td><td class="p-2.5">sprech<b>en</b></td><td class="p-2.5 font-black">sind</td><td class="p-2.5 font-black">haben</td></tr>
-              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">ihr</td><td class="p-2.5">wohn<b>t</b></td><td class="p-2.5">sprech<b>t</b></td><td class="p-2.5 font-black">seid</td><td class="p-2.5 font-black">habt</td></tr>
-              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">sie / Sie</td><td class="p-2.5">wohn<b>en</b></td><td class="p-2.5">sprech<b>en</b></td><td class="p-2.5 font-black">sind</td><td class="p-2.5 font-black">haben</td></tr>
-            </tbody>
-          </table>
+          <h4 class="font-black text-green-900 mb-1">1. Спряжение глаголов в Präsens</h4>
+          <p class="text-sm text-green-800">Убираем окончание <b>-en</b> и добавляем окончания: ich -e, du -st, er/sie/es -t, wir -en, ihr -t, sie/Sie -en.</p>
         </div>
         <div class="bg-blue-50 border-l-4 border-[#1cb0f6] p-4 rounded-r-xl text-sm text-blue-900">
-          <b>2. Порядок слов (Правило V2):</b> В повествовательном предложении спрягаемый глагол <b>всегда стоит на 2-м месте</b>: <i>Ich <b>lerne</b> heute Deutsch</i> ИЛИ <i>Heute <b>lerne</b> ich Deutsch</i>. В вопросе без вопросительного слова глагол выходит на 1-е место: <i><b>Kommst</b> du aus Berlin?</i>
+          <b>2. Порядок слов (Правило V2):</b> Спрягаемый глагол всегда стоит на 2-м месте в повествовательном предложении.
         </div>
       </div>
     `,
     vocab: [
       { de: "heißen", ru: "зваться, называться", ex: "Wie heißen Sie? Ich heiße Markus." },
       { de: "kommen", ru: "приходить, быть родом", ex: "Woher kommst du? Ich komme aus der Ukraine." },
-      { de: "wohnen", ru: "жить, проживать", ex: "Wir wohnen jetzt in München." },
-      { de: "sprechen", ru: "говорить, разговаривать", ex: "Er spricht fließend Deutsch und Englisch." },
-      { de: "arbeiten", ru: "работать", ex: "Meine Mutter arbeitet als Ärztin." },
-      { de: "studieren", ru: "учиться в вузе", ex: "Ich studiere Informatik an der Universität." },
-      { de: "verstehen", ru: "понимать", ex: "Verstehst du diese Frage?" },
-      { de: "der Vorname, -n", ru: "имя", ex: "Mein Vorname ist Alexander." },
-      { de: "der Familienname, -n", ru: "фамилия", ex: "Wie ist Ihr Familienname?" },
-      { de: "die Fremdsprache, -n", ru: "иностранный язык", ex: "Deutsch ist eine wichtige Fremdsprache." },
-      { de: "der Beruf, -e", ru: "профессия", ex: "Was sind Sie von Beruf?" },
-      { de: "die Adresse, -n", ru: "адрес", ex: "Kannst du mir deine Adresse sagen?" },
-      { de: "buchstabieren", ru: "произносить по буквам", ex: "Können Sie das bitte buchstabieren?" },
-      { de: "ledig", ru: "холостой, не замужем", ex: "Mein Bruder ist noch ledig." },
-      { de: "verheiratet", ru: "женат, замужем", ex: "Sind Sie verheiratet?" }
+      { de: "wohnen", ru: "жить, проживать", ex: "Wir wohnen jetzt in München." }
     ],
     dialogues: [
-      { speaker: "Anna", de: "Guten Tag! Ich heiße Anna Kovalenko. Und wie heißen Sie?", ru: "Добрый день! Меня зовут Анна Коваленко. А как зовут Вас?" },
-      { speaker: "Herr Weber", de: "Guten Tag! Mein Name ist Thomas Weber. Freut mich sehr!", ru: "Добрый день! Меня зовут Томас Вебер. Очень приятно!" },
-      { speaker: "Anna", de: "Woher kommen Sie, Herr Weber? Wohnen Sie hier in Berlin?", ru: "Откуда Вы родом, господин Вебер? Вы живете здесь в Берлине?" },
-      { speaker: "Herr Weber", de: "Ich komme aus der Schweiz, aus Zürich, aber ich arbeite jetzt in Berlin.", ru: "Я родом из Швейцарии, из Цюриха, но сейчас работаю в Берлине." },
-      { speaker: "Anna", de: "Interessant! Welche Sprachen sprechen Sie?", ru: "Интересно! На каких языках Вы говорите?" },
-      { speaker: "Herr Weber", de: "Ich spreche Deutsch, Französisch und ein bisschen Spanisch.", ru: "Я говорю по-немецки, по-французски и немного по-испански." }
+      { speaker: "Anna", de: "Guten Tag! Ich heiße Anna.", ru: "Добрый день! Меня зовут Анна." },
+      { speaker: "Thomas", de: "Guten Tag! Freut mich sehr!", ru: "Добрый день! Очень приятно!" }
     ],
     grammarQuestions: [
-      { type: "mc", q: "Выберите правильную форму глагола sein: «Ich ___ 22 Jahre alt.»", options: ["bin", "bist", "ist", "sind"], a: "bin", exp: "С местоимением ich глагол sein имеет форму bin." },
-      { type: "mc", q: "Выберите правильную форму: «Woher ___ du?»", options: ["komme", "kommst", "kommt", "kommen"], a: "kommst", exp: "Для местоимения du добавляется окончание -st." },
-      { type: "input", q: "Впишите правильную форму глагола haben: «Er ___ eine große Wohnung.»", a: "hat", exp: "В 3-м лице ед. числа (er/sie/es) глагол haben имеет форму hat." },
-      { type: "mc", q: "Глагол sprechen меняет корневую гласную e → i. Как сказать «Он говорит по-немецки»?", options: ["Er sprecht Deutsch", "Er spricht Deutsch", "Er sprechen Deutsch", "Er sprichst Deutsch"], a: "Er spricht Deutsch", exp: "В 3-м лице ед.ч. глагол sprechen меняет e на i: er spricht." },
-      { type: "input", q: "Впишите форму глагола sein: «___ ihr heute zu Hause?» (Вы сегодня дома?)", a: "Seid", exp: "С местоимением ihr (вы, мн.ч.) глагол sein имеет форму seid." },
-      { type: "mc", q: "Почему в глаголе arbeiten для du/er добавляется соединительная -e-?", options: ["Это сильный глагол", "Основа заканчивается на -t (du arbeitest, er arbeitet)", "Это исключение", "Это прошедшее время"], a: "Основа заканчивается на -t (du arbeitest, er arbeitet)", exp: "Если основа заканчивается на -t или -d, перед -st и -t добавляется -e- для благозвучия." },
-      { type: "mc", q: "Выберите предложение с правильным порядком слов (V2):", options: ["Heute ich arbeite in Berlin.", "Heute arbeite ich in Berlin.", "Ich heute arbeite in Berlin.", "In Berlin ich heute arbeite."], a: "Heute arbeite ich in Berlin.", exp: "Спрягаемый глагол arbeite обязан стоять на 2-м месте." },
-      { type: "input", q: "Впишите окончание глагола: «Wir lern___ zusammen Deutsch.» (впишите слово целиком)", a: "lernen", exp: "С местоимением wir глагол всегда имеет окончание -en: wir lernen." }
+      { type: "mc", q: "Выберите форму sein: «Ich ___ 22 Jahre alt.»", options: ["bin", "bist", "ist", "sind"], a: "bin", exp: "С ich используется bin." },
+      { type: "mc", q: "Выберите форму: «Woher ___ du?»", options: ["komme", "kommst", "kommt", "kommen"], a: "kommst", exp: "Для du окончание -st." }
     ]
   },
-
   {
     id: "a1_2",
     level: "A1",
-    title: "Урок 2: Семья, Еда, Покупки, Род и Винительный падеж (Akkusativ)",
-    subtitle: "Определенный/неопределенный артикли, отрицание kein и nicht, притяжательные местоимения",
+    title: "Урок 2: Семья, Еда, Покупки и Akkusativ",
+    subtitle: "Определенный и неопределенный артикль в Винительном падеже",
     color: "#38bdf8",
     icon: "fa-cart-shopping",
     grammarHTML: `
       <div class="space-y-4">
         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
-          <h4 class="font-black text-blue-900 mb-1">1. Винительный падеж (Akkusativ — Кого? Что?)</h4>
-          <p class="text-sm text-blue-800">Используется после переходных глаголов (<i>kaufen, haben, suchen, brauchen, essen, trinken, sehen, lieben</i>) и предлогов <b>für, durch, gegen, ohne, um</b>. В Akkusativ меняется <b>ТОЛЬКО мужской род</b>:</p>
+          <h4 class="font-black text-blue-900 mb-1">Винительный падеж (Akkusativ)</h4>
+          <p class="text-sm text-blue-800">В Akkusativ изменяется только мужской род: der -> den, ein -> einen, kein -> keinen.</p>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse card-duo overflow-hidden text-sm font-semibold">
-            <thead>
-              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
-                <th class="p-3">Род</th><th class="p-3">Nominativ (Кто? Что?)</th><th class="p-3">Akkusativ (Кого? Что?)</th><th class="p-3">Пример в Akkusativ</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr class="bg-red-50"><td class="p-2.5 font-black text-red-600">Мужской (Mask.)</td><td class="p-2.5">der / ein / kein / mein</td><td class="p-2.5 font-black text-red-600">den / einen / keinen / meinen</td><td class="p-2.5">Ich trinke <b>einen</b> Kaffee.</td></tr>
-              <tr><td class="p-2.5 font-bold text-pink-600">Женский (Fem.)</td><td class="p-2.5">die / eine / keine / meine</td><td class="p-2.5">die / eine / keine / meine</td><td class="p-2.5">Er sucht <b>seine</b> Tasche.</td></tr>
-              <tr><td class="p-2.5 font-bold text-green-600">Средний (Neut.)</td><td class="p-2.5">das / ein / kein / mein</td><td class="p-2.5">das / ein / kein / mein</td><td class="p-2.5">Wir kaufen <b>kein</b> Brot.</td></tr>
-              <tr><td class="p-2.5 font-bold text-purple-600">Множ. ч. (Pl.)</td><td class="p-2.5">die / — / keine / meine</td><td class="p-2.5">die / — / keine / meine</td><td class="p-2.5">Sie isst <b>die</b> Äpfel.</td></tr>
-            </tbody>
-          </table>
+      </div>
+    `,
+    vocab: [
+      { de: "kaufen", ru: "покупать", ex: "Ich kaufe einen Apfel." },
+      { de: "brauchen", ru: "нуждаться", ex: "Wir brauchen Hilfe." }
+    ],
+    dialogues: [
+      { speaker: "Kunde", de: "Ich hätte gerne einen Kaffee.", ru: "Я бы хотел кофе." }
+    ],
+    grammarQuestions: [
+      { type: "mc", q: "Выберите правильный артикль: «Ich trinke ___ Kaffee (m).»", options: ["einen", "eine", "ein", "der"], a: "einen", exp: "В Akkusativ мужской род принимает einen." }
+    ]
+  }
+];
+
+// Функция переключения вкладок
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('aside nav button').forEach(btn => {
+    btn.className = "w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent";
+  });
+  const activeBtn = document.getElementById('nav-' + tab);
+  if (activeBtn) {
+    activeBtn.className = "w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider bg-blue-50 text-[#1cb0f6] border-2 border-[#1cb0f6]";
+  }
+  renderContent();
+}
+
+function filterLevel(lvl) {
+  currentLevelFilter = lvl;
+  ['ALL', 'A1', 'A2', 'B1', 'B2'].forEach(l => {
+    const b = document.getElementById('lvl-' + l);
+    if(b) {
+      if(l === lvl) b.className = "px-3 py-1 rounded-lg font-black text-xs uppercase bg-gray-800 text-white";
+      else b.className = "px-3 py-1 rounded-lg font-black text-xs uppercase bg-gray-200 text-gray-700 hover:bg-gray-300";
+    }
+  });
+  renderContent();
+}
+
+function renderContent() {
+  const container = document.getElementById('main-container');
+  if (!container) return;
+
+  if (currentTab === 'path') {
+    let html = `<div class="max-w-3xl mx-auto space-y-6"><h2 class="text-2xl font-black mb-4">Карта уроков немецкого языка</h2>`;
+    MODULES.forEach((m, idx) => {
+      if (currentLevelFilter !== 'ALL' && m.level !== currentLevelFilter) return;
+      const isDone = completedModules.includes(m.id);
+      html += `
+        <div class="card-duo p-6 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-md" style="background-color: ${m.color}">
+              <i class="fa-solid ${m.icon}"></i>
+            </div>
+            <div>
+              <span class="text-xs font-black px-2 py-0.5 rounded bg-gray-100 text-gray-600">${m.level}</span>
+              <h3 class="font-black text-lg text-gray-800 mt-1">${m.title}</h3>
+              <p class="text-xs text-gray-500 mt-0.5">${m.subtitle}</p>
+            </div>
+          </div>
+          <button onclick="alert('Урок открыт!')" class="btn-duo-green px-6 py-2.5 rounded-xl font-black text-sm uppercase">
+            ${isDone ? 'Повторить' : 'Начать'}
+          </button>
         </div>
-        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-sm text-amber-900">
-          <b>2. Правило отрицания kein vs. nicht:</b><br>
-          • <b>kein</b> отрицает ТОЛЬКО существительные, которые употребляются с неопределенным артиклем или без артикля: <i>Ich habe <b>keinen</b> Hunger. Das ist <b>keine</b> Suppe.</i><br>
-          • <b>nicht</b> отрицает глаголы, прилагательные, наречия и существительные с определенным/притяжательным артиклем: <i>Ich
+      `;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
+  } else {
+    container.innerHTML = `<div class="text-center py-20 text-gray-400 font-bold">Раздел в разработке</div>`;
+  }
+}
+
+function speakGerman(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+function restoreHearts() {
+  hearts = 5;
+  updateStats();
+  alert('Сердца восстановлены!');
+}
+
+function resetProgress() {
+  if(confirm('Сбросить весь прогресс?')) {
+    completedModules = [];
+    localStorage.removeItem('dp_completed');
+    renderContent();
+  }
+}
+
+function updateStats() {
+  document.getElementById('stat-xp').innerText = xp;
+  document.getElementById('stat-hearts').innerText = hearts;
+  document.getElementById('stat-streak').innerText = streak;
+  const percent = Math.round((completedModules.length / MODULES.length) * 100);
+  document.getElementById('sidebar-progress-bar').style.width = percent + '%';
+  document.getElementById('sidebar-completed-text').innerText = `${completedModules.length} из ${MODULES.length} тем`;
+}
+
+// Инициализация при загрузке
+window.onload = function() {
+  renderContent();
+  updateStats();
+};
+</script>
+</body>
+</html>
