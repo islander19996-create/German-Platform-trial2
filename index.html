@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DeutschProfi — Интерактивная платформа немецкого языка (A1–B2)</title>
+  <title>DeutschLingua — Интерактивная платформа немецкого языка</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,6 +13,7 @@
       background-color: #f7f7f7;
       user-select: none;
     }
+    /* Фирменные 3D-кнопки в стиле Duolingo */
     .btn-duo-green {
       background-color: #58cc02;
       box-shadow: 0 4px 0 #58a700;
@@ -20,8 +21,10 @@
       transition: all 0.1s;
     }
     .btn-duo-green:hover { background-color: #61e002; }
-    .btn-duo-green:active { transform: translateY(4px); box-shadow: 0 0px 0 #58a700; }
-
+    .btn-duo-green:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 #58a700;
+    }
     .btn-duo-blue {
       background-color: #1cb0f6;
       box-shadow: 0 4px 0 #1899d6;
@@ -29,8 +32,20 @@
       transition: all 0.1s;
     }
     .btn-duo-blue:hover { background-color: #2bd5ff; }
-    .btn-duo-blue:active { transform: translateY(4px); box-shadow: 0 0px 0 #1899d6; }
-
+    .btn-duo-blue:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 #1899d6;
+    }
+    .btn-duo-yellow {
+      background-color: #ffc800;
+      box-shadow: 0 4px 0 #e5a400;
+      color: #4b4b4b;
+      transition: all 0.1s;
+    }
+    .btn-duo-yellow:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 #e5a400;
+    }
     .btn-duo-gray {
       background-color: #ffffff;
       border: 2px solid #e5e5e5;
@@ -39,241 +54,1469 @@
       transition: all 0.1s;
     }
     .btn-duo-gray:hover { background-color: #f7f7f7; border-color: #cecece; }
-    .btn-duo-gray:active { transform: translateY(4px); box-shadow: 0 0px 0 #e5e5e5; }
-
+    .btn-duo-gray:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 #e5e5e5;
+    }
     .card-duo {
       background: white;
       border: 2px solid #e5e5e5;
       border-radius: 1.25rem;
       box-shadow: 0 4px 0 #e5e5e5;
     }
+    /* 3D Переворот флеш-карт */
+    .perspective { perspective: 1000px; }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+    }
+    .flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 1.5rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
   </style>
 </head>
 <body class="text-gray-800 h-screen flex overflow-hidden">
 
-  <!-- Боковая панель -->
+  <!-- Боковая панель навигации -->
   <aside class="w-64 bg-white border-r-2 border-gray-200 flex flex-col justify-between z-20 shrink-0">
     <div>
+      <!-- Логотип -->
       <div class="p-6 flex items-center space-x-3 border-b-2 border-gray-100">
-        <div class="w-11 h-11 rounded-2xl bg-[#58cc02] flex items-center justify-center text-white font-black text-2xl shadow-[0_4px_0_#58a700]">
-          🇩🇪
+        <div class="w-10 h-10 rounded-xl bg-[#58cc02] flex items-center justify-center text-white font-black text-2xl shadow-[0_3px_0_#58a700]">
+          D
         </div>
         <div>
-          <span class="font-black text-2xl tracking-tight text-[#58cc02]">Deutsch</span><span class="font-black text-2xl tracking-tight text-gray-700">Profi</span>
-          <div class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Учебник A1 — B2</div>
+          <span class="font-black text-2xl tracking-tight text-[#58cc02]">Deutsch</span><span class="font-black text-2xl tracking-tight text-gray-700">Lingua</span>
         </div>
       </div>
 
+      <!-- Меню -->
       <nav class="p-4 space-y-2">
         <button onclick="switchTab('path')" id="nav-path" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider bg-blue-50 text-[#1cb0f6] border-2 border-[#1cb0f6]">
           <i class="fa-solid fa-map-location-dot text-xl w-6 text-center"></i>
-          <span>Карта уроков</span>
+          <span>Карта курсов</span>
+        </button>
+        <button onclick="switchTab('verbs')" id="nav-verbs" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
+          <i class="fa-solid fa-dumbbell text-xl w-6 text-center text-orange-500"></i>
+          <span>Сильные глаголы</span>
+        </button>
+        <button onclick="switchTab('grammar')" id="nav-grammar" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
+          <i class="fa-solid fa-book-bookmark text-xl w-6 text-center text-purple-500"></i>
+          <span>Справочник таблиц</span>
+        </button>
+        <button onclick="switchTab('phonetics')" id="nav-phonetics" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
+          <i class="fa-solid fa-volume-high text-xl w-6 text-center text-green-500"></i>
+          <span>Фонетика и Чтение</span>
         </button>
       </nav>
     </div>
 
+    <!-- Прогресс внизу сайдбара -->
     <div class="p-4 m-4 bg-gray-50 rounded-2xl border-2 border-gray-200">
-      <div class="text-xs font-extrabold uppercase text-gray-400 mb-2">Прогресс учебника</div>
+      <div class="text-xs font-extrabold uppercase text-gray-400 mb-2">Общий прогресс курса</div>
       <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden mb-2">
         <div id="sidebar-progress-bar" class="bg-[#58cc02] h-full transition-all duration-500" style="width: 0%"></div>
       </div>
-      <div class="flex justify-between items-center text-xs font-bold text-gray-600">
-        <span id="sidebar-completed-text">0 из 2 тем</span>
-        <button onclick="resetProgress()" class="text-red-400 hover:underline">Сбросить</button>
+      <div class="flex justify-between text-xs font-bold text-gray-600">
+        <span id="sidebar-completed-text">0 из 6 тем пройдено</span>
+        <button onclick="resetProgress()" class="text-red-400 hover:underline">Сброс</button>
       </div>
     </div>
   </aside>
 
-  <!-- Основная область -->
+  <!-- Основная рабочая область -->
   <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <!-- Верхний бар со статистикой -->
     <header class="h-16 bg-white border-b-2 border-gray-200 px-8 flex items-center justify-between shrink-0 z-10">
-      <div class="flex items-center space-x-2">
-        <span class="font-black text-lg text-gray-700" id="header-title">Главное меню</span>
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl">🇩🇪</span>
+        <span class="font-extrabold text-gray-600 text-sm uppercase tracking-wider">Курс: Немецкий от A1 до B2</span>
       </div>
-
       <div class="flex items-center space-x-6">
-        <div class="flex items-center space-x-2 font-extrabold text-orange-500">
+        <!-- Ударный режим -->
+        <div class="flex items-center space-x-2 font-extrabold text-orange-500" title="Ударный режим">
           <i class="fa-solid fa-fire text-xl"></i>
-          <span id="stat-streak">5</span>
+          <span id="stat-streak">3</span>
         </div>
-        <div class="flex items-center space-x-2 font-extrabold text-[#ffc800]">
+        <!-- Очки опыта XP -->
+        <div class="flex items-center space-x-2 font-extrabold text-[#ffc800]" title="Очки опыта (XP)">
           <i class="fa-solid fa-bolt text-xl"></i>
-          <span id="stat-xp">250</span><span>XP</span>
+          <span id="stat-xp">120</span><span>XP</span>
         </div>
-        <div class="flex items-center space-x-2 font-extrabold text-red-500">
+        <!-- Жизни -->
+        <div class="flex items-center space-x-2 font-extrabold text-red-500" title="Запас сердец">
           <i class="fa-solid fa-heart text-xl"></i>
           <span id="stat-hearts">5</span>
         </div>
+        <!-- Кнопка проверки звука -->
+        <button onclick="speakGerman('Hallo! Willkommen bei DeutschLingua!')" class="btn-duo-gray px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center space-x-2">
+          <i class="fa-solid fa-headphones text-[#1cb0f6]"></i>
+          <span>Тест звука</span>
+        </button>
       </div>
     </header>
 
-    <main id="main-container" class="flex-1 overflow-y-auto p-6 md:p-10 bg-gray-50">
-      <!-- Сюда динамически грузится контент -->
+    <!-- Контент вкладок -->
+    <main id="main-container" class="flex-1 overflow-y-auto p-6 md:p-10">
+      <!-- Сюда рендерятся страницы через JS -->
     </main>
   </div>
 
 <script>
-let xp = 250;
-let hearts = 5;
-let streak = 5;
-let completedModules = JSON.parse(localStorage.getItem('dp_completed') || '[]');
-
+// ============================================================================
+// 1. БАЗА ДАННЫХ УРОКОВ (A1 - B2)
+// ============================================================================
 const MODULES = [
   {
     id: "a1_1",
     level: "A1",
-    title: "Урок 1: Знакомство и глаголы sein / haben",
-    subtitle: "Приветствия, личные местоимения, правило V2",
+    title: "Модуль 1: Знакомство, Фонетика, Глаголы в Präsens",
+    subtitle: "Приветствия, личные местоимения, связка sein/haben и базовое спряжение",
     color: "#58cc02",
     icon: "fa-handshake",
-    theory: "В немецком языке глаголы-связки sein (быть) и haben (иметь) спрягаются особым образом. Главное правило порядка слов (V2) требует, чтобы спрягаемый глагол всегда стоял на втором месте в предложении.",
+    grammarHTML: `
+      <div class="space-y-6">
+        <div class="bg-green-50 border-l-4 border-[#58cc02] p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-green-900 mb-1">1. Спряжение правильных глаголов в Präsens (Настоящее время)</h4>
+          <p class="text-sm text-green-800">Основа глагола получается отбрасыванием окончания <b>-en</b> (например, <b>mach-en</b> → <b>mach-</b>). К основе добавляются личные окончания:</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse card-duo overflow-hidden">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Местоимение</th>
+                <th class="p-3">Окончание</th>
+                <th class="p-3">machen (делать)</th>
+                <th class="p-3">sein (быть) — искл.</th>
+                <th class="p-3">haben (иметь) — искл.</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 text-sm font-semibold">
+              <tr><td class="p-3 font-bold text-[#1cb0f6]">ich (я)</td><td class="p-3 text-red-500">-e</td><td class="p-3">ich mach<b>e</b></td><td class="p-3">ich <b>bin</b></td><td class="p-3">ich <b>habe</b></td></tr>
+              <tr><td class="p-3 font-bold text-[#1cb0f6]">du (ты)</td><td class="p-3 text-red-500">-st</td><td class="p-3">du mach<b>st</b></td><td class="p-3">du <b>bist</b></td><td class="p-3">du <b>hast</b></td></tr>
+              <tr><td class="p-3 font-bold text-[#1cb0f6]">er/sie/es (он/она/оно)</td><td class="p-3 text-red-500">-t</td><td class="p-3">er mach<b>t</b></td><td class="p-3">er <b>ist</b></td><td class="p-3">er <b>hat</b></td></tr>
+              <tr><td class="p-3 font-bold text-[#1cb0f6]">wir (мы)</td><td class="p-3 text-red-500">-en</td><td class="p-3">wir mach<b>en</b></td><td class="p-3">wir <b>sind</b></td><td class="p-3">wir <b>haben</b></td></tr>
+              <tr><td class="p-3 font-bold text-[#1cb0f6]">ihr (вы, мн.ч.)</td><td class="p-3 text-red-500">-t</td><td class="p-3">ihr mach<b>t</b></td><td class="p-3">ihr <b>seid</b></td><td class="p-3">ihr <b>habt</b></td></tr>
+              <tr><td class="p-3 font-bold text-[#1cb0f6]">sie / Sie (они / Вы)</td><td class="p-3 text-red-500">-en</td><td class="p-3">Sie mach<b>en</b></td><td class="p-3">Sie <b>sind</b></td><td class="p-3">Sie <b>haben</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bg-blue-50 border-l-4 border-[#1cb0f6] p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-blue-900 mb-1">2. Железное правило порядка слов (V2)</h4>
+          <p class="text-sm text-blue-800">В немецком повествовательном предложении спрягаемый глагол <b>ВСЕГДА стоит на втором месте</b>:<br>
+          • <i>Ich <b>komme</b> heute aus Berlin.</i> (Прямой порядок)<br>
+          • <i>Heute <b>komme</b> ich aus Berlin.</i> (Обратный порядок — глагол всё равно второй!)</p>
+        </div>
+      </div>
+    `,
     vocab: [
-      { de: "heißen", ru: "зваться, называться" },
-      { de: "kommen", ru: "приходить, быть родом" },
-      { de: "wohnen", ru: "жить, проживать" }
+      { de: "Guten Morgen", ru: "Доброе утро", ex: "Guten Morgen, Frau Müller!" },
+      { de: "Auf Wiedersehen", ru: "До свидания", ex: "Auf Wiedersehen und bis morgen!" },
+      { de: "heißen", ru: "зваться, называться", ex: "Wie heißen Sie? Ich heiße Thomas." },
+      { de: "kommen", ru: "приходить, происходить (из)", ex: "Woher kommst du? Ich komme aus der Ukraine." },
+      { de: "wohnen", ru: "жить, проживать", ex: "Ich wohne in Berlin." },
+      { de: "sprechen", ru: "говорить, разговаривать", ex: "Sprichst du Deutsch?" },
+      { de: "der Name, -n", ru: "имя, фамилия", ex: "Mein Name ist Lukas." },
+      { de: "die Sprache, -n", ru: "язык", ex: "Deutsch ist eine schöne Sprache." },
+      { de: "das Land, ¨-er", ru: "страна", ex: "Deutschland ist ein großes Land." },
+      { de: "lernen", ru: "учить, учиться", ex: "Wir lernen zusammen Deutsch." },
+      { de: "arbeiten", ru: "работать", ex: "Mein Vater arbeitet viel." },
+      { de: "verstehen", ru: "понимать", ex: "Ich verstehe dich sehr gut." },
+      { de: "entschuldigen", ru: "извинять", ex: "Entschuldigen Sie bitte!" },
+      { de: "vielleicht", ru: "возможно, может быть", ex: "Vielleicht komme ich heute Abend." },
+      { de: "zusammen", ru: "вместе", ex: "Wir machen das Projekt zusammen." }
     ],
-    question: {
-      q: "Выберите правильную форму глагола sein: «Ich ___ 22 Jahre alt.»",
-      options: ["bin", "bist", "ist", "sind"],
-      a: "bin"
-    }
+    dialogues: [
+      { speaker: "Anna", de: "Hallo! Ich heiße Anna. Und wie heißt du?", ru: "Привет! Меня зовут Анна. А как зовут тебя?" },
+      { speaker: "Max", de: "Guten Tag! Mein Name ist Max. Freut mich!", ru: "Добрый день! Мое имя Макс. Приятно познакомиться!" },
+      { speaker: "Anna", de: "Freut mich auch! Woher kommst du, Max?", ru: "Мне тоже приятно! Откуда ты родом, Макс?" },
+      { speaker: "Max", de: "Ich komme aus Österreich, aus Wien. Aber jetzt wohne ich in München.", ru: "Я из Австрии, из Вены. Но сейчас я живу в Мюнхене." },
+      { speaker: "Anna", de: "Interessant! Was machst du beruflich? Studierst du oder arbeitest du?", ru: "Интересно! Чем ты занимаешься по профессии? Учишься или работаешь?" },
+      { speaker: "Max", de: "Ich bin Programmierer und arbeite bei einer IT-Firma. Und du?", ru: "Я программист и работаю в IT-компании. А ты?" },
+      { speaker: "Anna", de: "Ich bin Lehrerin und unterrichte Englisch.", ru: "Я преподаватель и преподаю английский." }
+    ],
+    grammarQuestions: [
+      { type: "mc", q: "Выберите правильную форму: «Ich ___ 24 Jahre alt.»", options: ["bin", "bist", "ist", "sind"], a: "bin", exp: "С местоимением ich глагол sein имеет форму bin." },
+      { type: "mc", q: "Выберите правильную форму: «Woher ___ du?»", options: ["komme", "kommst", "kommt", "kommen"], a: "kommst", exp: "Для местоимения du добавляется окончание -st." },
+      { type: "input", q: "Впишите правильную форму глагола haben: «Er ___ ein Auto.»", a: "hat", exp: "В 3-м лице ед. числа (er/sie/es) глагол haben меняется на hat." },
+      { type: "mc", q: "Выберите правильную форму: «Wir ___ in Kiew.»", options: ["wohne", "wohnst", "wohnt", "wohnen"], a: "wohnen", exp: "С местоимением wir глагол получает окончание -en." },
+      { type: "input", q: "Впишите правильную форму глагола sein: «___ ihr müde?» (Вы устали?)", a: "Seid", exp: "Для местоимения ihr глагол sein имеет форму seid." },
+      { type: "mc", q: "Глагол sprechen меняет корневую гласную e → i. Как сказать «Ты говоришь»?", options: ["Du sprechst", "Du sprichst", "Du spricht", "Du sprechen"], a: "Du sprichst", exp: "Сильный глагол sprechen: ich spreche, du sprichst, er spricht." },
+      { type: "mc", q: "Выберите правильный порядок слов: «Сегодня я учу немецкий»", options: ["Heute ich lerne Deutsch.", "Heute lerne ich Deutsch.", "Ich heute lerne Deutsch.", "Deutsch ich lerne heute."], a: "Heute lerne ich Deutsch.", exp: "Правило V2: глагол lerne обязан стоять на 2-м месте." },
+      { type: "input", q: "Впишите форму глагола heißen: «Wie ___ Sie?»", a: "heißen", exp: "С вежливой формой Sie глагол всегда имеет окончание -en." }
+    ]
   },
   {
     id: "a1_2",
     level: "A1",
-    title: "Урок 2: Покупки и Винительный падеж (Akkusativ)",
-    subtitle: "Определенный и неопределенный артикль в Akkusativ",
-    color: "#38bdf8",
-    icon: "fa-cart-shopping",
-    theory: "Винительный падеж (Akkusativ) отвечает на вопросы Wen? Was? (Кого? Что?). Изменяется только артикль мужского рода: der превращается в den, ein в einen.",
+    title: "Модуль 2: Род, Артикли, Винительный падеж (Akkusativ)",
+    subtitle: "Определенный/неопределенный артикли, отрицание kein/nicht, модальные глаголы",
+    color: "#3b82f6",
+    icon: "fa-apple-whole",
+    grammarHTML: `
+      <div class="space-y-6">
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-blue-900 mb-1">1. Изменение артиклей в Nominativ и Akkusativ</h4>
+          <p class="text-sm text-blue-800">В винительном падеже (<b>Akkusativ</b> — отвечает на вопросы <i>Кого? Что? Куда?</i>) меняется <b>ТОЛЬКО мужской род</b> (<b>der → den</b>, <b>ein → einen</b>, <b>kein → keinen</b>)!</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse card-duo overflow-hidden">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Род</th>
+                <th class="p-3">Nominativ (Кто? Что?)</th>
+                <th class="p-3">Akkusativ (Кого? Что?)</th>
+                <th class="p-3">Пример в Akkusativ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 text-sm font-semibold">
+              <tr class="bg-red-50"><td class="p-3 font-black text-red-600">Мужской (Maskulinum)</td><td class="p-3"><b>der</b> / ein / kein</td><td class="p-3 text-red-600 font-black">den / einen / keinen</td><td class="p-3">Ich kaufe <b>einen</b> Apfel.</td></tr>
+              <tr><td class="p-3 font-bold text-pink-600">Женский (Femininum)</td><td class="p-3"><b>die</b> / eine / keine</td><td class="p-3">die / eine / keine</td><td class="p-3">Ich sehe <b>die</b> Katze.</td></tr>
+              <tr><td class="p-3 font-bold text-green-600">Средний (Neutrum)</td><td class="p-3"><b>das</b> / ein / kein</td><td class="p-3">das / ein / kein</td><td class="p-3">Wir lesen <b>ein</b> Buch.</td></tr>
+              <tr><td class="p-3 font-bold text-purple-600">Множ. ч. (Plural)</td><td class="p-3"><b>die</b> / — / keine</td><td class="p-3">die / — / keine</td><td class="p-3">Er hat <b>keine</b> Freunde.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-yellow-900 mb-1">2. Модальные глаголы и рамочная конструкция</h4>
+          <p class="text-sm text-yellow-800">Модальный глагол (<b>können, müssen, wollen, möchten</b>) стоит на <b>2-м месте</b>, а смысловой глагол уходит в самый конец предложения в начальной форме (Infinitiv):<br>
+          • <i>Ich <b>möchte</b> heute einen Kaffee <b>trinken</b>.</i></p>
+        </div>
+      </div>
+    `,
     vocab: [
-      { de: "kaufen", ru: "покупать" },
-      { de: "brauchen", ru: "нуждаться" }
+      { de: "der Tisch, -e", ru: "стол", ex: "Ich kaufe einen großen Tisch." },
+      { de: "der Stuhl, ¨-e", ru: "стул", ex: "Wir brauchen noch einen Stuhl." },
+      { de: "der Apfel, ¨-", ru: "яблоко", ex: "Isst du einen Apfel?" },
+      { de: "der Kaffee", ru: "кофе", ex: "Ich trinke morgens immer einen Kaffee." },
+      { de: "die Tasche, -n", ru: "сумка", ex: "Sie sucht ihre Tasche." },
+      { de: "die Zeitung, -en", ru: "газета", ex: "Mein Opa liest die Zeitung." },
+      { de: "das Buch, ¨-er", ru: "книга", ex: "Ich lese ein interessantes Buch." },
+      { de: "das Brot, -e", ru: "хлеб", ex: "Wir kaufen frisches Brot." },
+      { de: "kaufen", ru: "покупать", ex: "Was möchtest du im Supermarkt kaufen?" },
+      { de: "brauchen", ru: "нуждаться (в чем-то)", ex: "Ich brauche keinen Regenschirm." },
+      { de: "suchen", ru: "искать", ex: "Wen suchst du hier?" },
+      { de: "können", ru: "мочь, уметь", ex: "Kannst du gut schwimmen?" },
+      { de: "müssen", ru: "быть должным", ex: "Ich muss heute lange arbeiten." },
+      { de: "wollen", ru: "хотеть (твердое намерение)", ex: "Wir wollen nach Berlin fahren." },
+      { de: "möchten", ru: "хотел бы (вежливо)", ex: "Ich möchte bitte bezahlen." }
     ],
-    question: {
-      q: "Выберите правильный артикль: «Ich trinke ___ Kaffee (m).»",
-      options: ["einen", "eine", "ein", "der"],
-      a: "einen"
-    }
+    dialogues: [
+      { speaker: "Kellner", de: "Guten Tag! Was möchten Sie bestellen?", ru: "Добрый день! Что бы Вы хотели заказать?" },
+      { speaker: "Kunde", de: "Ich nehme einen Kaffee und ein Croissant, bitte.", ru: "Я возьму кофе и круассан, пожалуйста." },
+      { speaker: "Kellner", de: "Möchten Sie den Kaffee mit Milch und Zucker?", ru: "Хотите кофе с молоком и сахаром?" },
+      { speaker: "Kunde", de: "Nur mit Milch, bitte. Ich brauche keinen Zucker.", ru: "Только с молоком, пожалуйста. Мне не нужен сахар." },
+      { speaker: "Kellner", de: "Sehr gern. Kommt sofort!", ru: "С удовольствием. Сейчас принесу!" }
+    ],
+    grammarQuestions: [
+      { type: "mc", q: "Какой артикль нужен: «Ich kaufe ___ Tisch (der Tisch).»?", options: ["der", "den", "dem", "des"], a: "den", exp: "Глагол kaufen требует Akkusativ. Мужской род der меняется на den." },
+      { type: "input", q: "Впишите неопределенный артикль в Akkusativ: «Er isst ___ Apfel (der Apfel).»", a: "einen", exp: "Мужской род в Akkusativ: ein → einen." },
+      { type: "mc", q: "Как правильно отрицать существительное с неопределенным артиклем: «У меня нет машины (das Auto)»?", options: ["Ich habe nicht Auto.", "Ich habe kein Auto.", "Ich habe keinen Auto.", "Ich nicht habe Auto."], a: "Ich habe kein Auto.", exp: "Существительные без артикля или с неопределенным артиклем отрицаются словом kein (средний род — kein)." },
+      { type: "mc", q: "Выберите правильную форму глагола können: «___ ich Ihnen helfen?»", options: ["Kann", "Kannst", "Könnt", "Können"], a: "Kann", exp: "В 1-м и 3-м лице ед.ч. у модальных глаголов нет личных окончаний: ich kann, er kann." },
+      { type: "input", q: "Впишите правильную форму глагола müssen: «Du ___ jetzt gehen.»", a: "musst", exp: "С местоимением du глагол müssen теряет умляут и получает окончание -t: du musst." },
+      { type: "mc", q: "Где должен стоять второй глагол: «Я хочу купить книгу»?", options: ["Ich will kaufen ein Buch.", "Ich will ein Buch kaufen.", "Ich kaufen will ein Buch.", "Ein Buch ich will kaufen."], a: "Ich will ein Buch kaufen.", exp: "Второй глагол в инфинитиве всегда уходит в самый конец предложения." },
+      { type: "input", q: "Впишите форму глагола wollen: «Er ___ Deutsch lernen.»", a: "will", exp: "Глагол wollen в ед. числе меняет корневую гласную: ich will, du willst, er will." },
+      { type: "mc", q: "Какой предлог ВСЕГДА требует падежа Akkusativ?", options: ["mit", "aus", "für", "bei"], a: "für", exp: "Предлоги für, durch, gegen, ohne, um всегда требуют Akkusativ." }
+    ]
+  },
+  {
+    id: "a2_1",
+    level: "A2",
+    title: "Модуль 3: Прошедшее время Perfekt и Дательный падеж (Dativ)",
+    subtitle: "Вспомогательные глаголы haben/sein, Partizip II, предлоги Dativ и Wechselpräpositionen",
+    color: "#f59e0b",
+    icon: "fa-clock-rotate-left",
+    grammarHTML: `
+      <div class="space-y-6">
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-amber-900 mb-1">1. Разговорное прошедшее время Perfekt</h4>
+          <p class="text-sm text-amber-800">Формула: <b>haben / sein (на 2-м месте) + Partizip II (в самом конце предложения)</b>.<br>
+          • <b>sein</b> используется с глаголами движения из А в Б (<i>gehen, fahren, fliegen, kommen</i>), смены состояния (<i>aufwachen, einschlafen, sterben</i>) и глаголами <i>sein, bleiben, passieren</i>.<br>
+          • <b>haben</b> используется во всех остальных случаях (переходные, модальные, возвратные глаголы).</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse card-duo overflow-hidden">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Род</th>
+                <th class="p-3">Nominativ</th>
+                <th class="p-3">Dativ (Кому? Где?)</th>
+                <th class="p-3">Предлоги только с Dativ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 text-sm font-semibold">
+              <tr><td class="p-3 font-bold">Мужской (der)</td><td class="p-3">der / ein</td><td class="p-3 text-amber-600 font-black">dem / einem</td><td class="p-3" rowspan="4"><b>mit</b> (с)<br><b>nach</b> (после, в)<br><b>aus</b> (из)<br><b>zu</b> (к)<br><b>von</b> (от)<br><b>bei</b> (у, при)<br><b>seit</b> (с тех пор как)</td></tr>
+              <tr><td class="p-3 font-bold">Средний (das)</td><td class="p-3">das / ein</td><td class="p-3 text-amber-600 font-black">dem / einem</td></tr>
+              <tr><td class="p-3 font-bold">Женский (die)</td><td class="p-3">die / eine</td><td class="p-3 text-amber-600 font-black">der / einer</td></tr>
+              <tr><td class="p-3 font-bold">Множ. ч. (die)</td><td class="p-3">die / —</td><td class="p-3 text-amber-600 font-black">den (+n к сущ.)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `,
+    vocab: [
+      { de: "reisen (ist gereist)", ru: "путешествовать", ex: "Letztes Jahr sind wir nach Italien gereist." },
+      { de: "fliegen (ist geflogen)", ru: "летать", ex: "Bist du schon einmal nach Berlin geflogen?" },
+      { de: "bleiben (ist geblieben)", ru: "оставаться", ex: "Gestern bin ich zu Hause geblieben." },
+      { de: "passieren (ist passiert)", ru: "случаться, происходить", ex: "Was ist denn hier passiert?" },
+      { de: "helfen (hat geholfen) + Dat.", ru: "помогать (кому-л.)", ex: "Er hat seinem Bruder geholfen." },
+      { de: "gefallen (hat gefallen) + Dat.", ru: "нравиться", ex: "Das Hotel hat mir sehr gut gefallen." },
+      { de: "antworten (hat geantwortet) + Dat.", ru: "отвечать", ex: "Sie hat dem Chef noch nicht geantwortet." },
+      { de: "der Bahnhof, ¨-e", ru: "вокзал", ex: "Wie komme ich zum Bahnhof?" },
+      { de: "der Flughafen, ¨-", ru: "аэропорт", ex: "Wir fahren mit dem Taxi zum Flughafen." },
+      { de: "das Geschenk, -e", ru: "подарок", ex: "Ich kaufe meiner Mutter ein Geschenk." },
+      { de: "der Urlaub, -e", ru: "отпуск", ex: "Im Sommer machen wir Urlaub am Meer." },
+      { de: "gestern", ru: "вчера", ex: "Was hast du gestern Abend gemacht?" },
+      { de: "pünktlich", ru: "пунктуальный, вовремя", ex: "Der Zug ist heute pünktlich angekommen." },
+      { de: "umsteigen (ist umgestiegen)", ru: "делать пересадку", ex: "In Frankfurt müssen wir umsteigen." },
+      { de: "besichtigen (hat besichtigt)", ru: "осматривать (достопримечательности)", ex: "Wir haben das alte Schloss besichtigt." }
+    ],
+    dialogues: [
+      { speaker: "Lisa", de: "Hallo Tim! Wie war dein Wochenende? Was hast du gemacht?", ru: "Привет, Тим! Как прошли твои выходные? Что ты делал?" },
+      { speaker: "Tim", de: "Hallo Lisa! Am Samstag bin ich mit dem Zug nach Dresden gefahren.", ru: "Привет, Лиза! В субботу я ездил на поезде в Дрезден." },
+      { speaker: "Lisa", de: "Oh, toll! Mit wem bist du gefahren?", ru: "О, здорово! С кем ты ездил?" },
+      { speaker: "Tim", de: "Ich bin mit meinem Freund Markus gefahren. Wir haben die Altstadt besichtigt.", ru: "Я ездил со своим другом Маркусом. Мы осмотрели старый город." },
+      { speaker: "Lisa", de: "Hat euch die Stadt gefallen?", ru: "Вам понравился город?" },
+      { speaker: "Tim", de: "Ja, Dresden hat uns super gefallen! Am Sonntagabend sind wir zurückgekommen.", ru: "Да, Дрезден нам очень понравился! В воскресенье вечером мы вернулись." }
+    ],
+    grammarQuestions: [
+      { type: "mc", q: "Какой вспомогательный глагол нужен в Perfekt: «Gestern ___ ich ins Kino gegangen.»?", options: ["habe", "bin", "hat", "ist"], a: "bin", exp: "Глагол движения gehen образует Perfekt с глаголом sein." },
+      { type: "input", q: "Напишите форму Partizip II от правильного глагола machen:", a: "gemacht", exp: "Правильные глаголы образуют Partizip II по схеме ge + основа + t: gemacht." },
+      { type: "mc", q: "Выберите правильный артикль в Dativ: «Ich fahre mit ___ Bus (der Bus).»", options: ["der", "den", "dem", "des"], a: "dem", exp: "Предлог mit всегда требует Dativ. Мужской род der в Dativ переходит в dem." },
+      { type: "mc", q: "Какой вспомогательный глагол используется с bleiben (оставаться)?", options: ["haben", "sein", "werden", "machen"], a: "sein", exp: "Глагол состояния bleiben (как и sein, passieren) является исключением и требует sein: Ich bin geblieben." },
+      { type: "input", q: "Впишите правильный артикль в Dativ: «Er hilft ___ Frau (die Frau).»", a: "der", exp: "Глагол helfen требует Dativ. Женский род die в Dativ меняется на der." },
+      { type: "mc", q: "Где ставится приставка -ge- у глаголов с отделяемой приставкой (например, einkaufen)?", options: ["geeinkauft", "eingekauft", "einkaufen", "gekaufteinen"], a: "eingekauft", exp: "У глаголов с отделяемой приставкой -ge- вставляется между приставкой и корнем: ein-ge-kauft." },
+      { type: "mc", q: "Различаем Wo? (Dativ) и Wohin? (Akkusativ): «Книга лежит на столе (der Tisch).»", options: ["Das Buch liegt auf den Tisch.", "Das Buch liegt auf dem Tisch.", "Das Buch liegt auf der Tisch.", "Das Buch liegt auf das Tisch."], a: "Das Buch liegt auf dem Tisch.", exp: "Вопрос Где? (Wo?) требует падежа Dativ: auf dem Tisch." },
+      { type: "input", q: "Напишите Partizip II от глагола studieren (глаголы на -ieren не получают ge-):", a: "studiert", exp: "Глаголы на -ieren образуют Partizip II без приставки ge-: studiert." }
+    ]
+  },
+  {
+    id: "b1_1",
+    level: "B1",
+    title: "Модуль 4: Придаточные предложения, Präteritum и Родительный падеж (Genitiv)",
+    subtitle: "Союзы weil, dass, obwohl, wenn, als, письменное прошедшее время и Genitiv",
+    color: "#8b5cf6",
+    icon: "fa-link",
+    grammarHTML: `
+      <div class="space-y-6">
+        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-purple-900 mb-1">1. Порядок слов в придаточном предложении (Nebensatz)</h4>
+          <p class="text-sm text-purple-800">После подчинительных союзов <b>weil</b> (потому что), <b>dass</b> (что), <b>wenn</b> (если/когда), <b>als</b> (когда — однократно в прошлом), <b>obwohl</b> (хотя), <b>ob</b> (ли) спрягаемый глагол уходит в <b>САМЫЙ КОНЕЦ</b> предложения:<br>
+          • <i>Ich lerne Deutsch, <b>weil</b> ich in Deutschland arbeiten <b>möchte</b>.</i><br>
+          Если придаточное стоит перед главным, то главное начинается сразу с глагола (правило «глагол + запятая + глагол»):<br>
+          • <i><b>Weil</b> ich krank <b>bin</b>, <b>bleibe</b> ich heute zu Hause.</i></p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse card-duo overflow-hidden">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Род</th>
+                <th class="p-3">Genitiv (Чей? Кого?)</th>
+                <th class="p-3">Предлоги с Genitiv</th>
+                <th class="p-3">Пример</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 text-sm font-semibold">
+              <tr><td class="p-3 font-bold">Мужской / Средний</td><td class="p-3 text-purple-600 font-black">des / eines (+s/-es к сущ.)</td><td class="p-3" rowspan="2"><b>trotz</b> (несмотря на)<br><b>während</b> (во время)<br><b>wegen</b> (из-за)<br><b>statt</b> (вместо)</td><td class="p-3">Trotz <b>des Regens</b> gehen wir spazieren.</td></tr>
+              <tr><td class="p-3 font-bold">Женский / Множ. ч.</td><td class="p-3 text-purple-600 font-black">der / einer</td><td class="p-3">Während <b>der Pause</b> trinken wir Kaffee.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `,
+    vocab: [
+      { de: "obwohl", ru: "хотя, несмотря на то что", ex: "Er geht zur Arbeit, obwohl er Fieber hat." },
+      { de: "während (+ Gen.)", ru: "во время; в то время как", ex: "Während des Unterrichts darf man nicht telefonieren." },
+      { de: "trotz (+ Gen.)", ru: "несмотря на", ex: "Trotz des schlechten Wetters sind wir gut gelaunt." },
+      { de: "wegen (+ Gen.)", ru: "из-за, по причине", ex: "Wegen des Staus bin ich zu spät gekommen." },
+      { de: "die Entscheidung, -en", ru: "решение", ex: "Das war eine sehr wichtige Entscheidung." },
+      { de: "die Erfahrung, -en", ru: "опыт", ex: "Hast du schon Berufserfahrung gesammelt?" },
+      { de: "die Bewerbung, -en", ru: "заявление о приеме на работу, резюме", ex: "Ich schreibe heute meine Bewerbung." },
+      { de: "das Vorstellungsgespräch, -e", ru: "собеседование", ex: "Morgen habe ich ein Vorstellungsgespräch." },
+      { de: "sich entscheiden (für + Akk.)", ru: "решаться, делать выбор", ex: "Ich habe mich für dieses Studium entschieden." },
+      { de: "teilnehmen (an + Dat.)", ru: "принимать участие (в чем-л.)", ex: "Nimmst du an der Konferenz teil?" },
+      { de: "sich vorbereiten (auf + Akk.)", ru: "готовиться (к чему-л.)", ex: "Wir bereiten uns intensiv auf die Prüfung vor." },
+      { de: "erfolgreich", ru: "успешный", ex: "Das Projekt war sehr erfolgreich." },
+      { de: "vergleichen (mit + Dat.)", ru: "сравнивать", ex: "Man kann diese zwei Städte nicht vergleichen." },
+      { de: "empfehlen (empfiehlt)", ru: "рекомендовать", ex: "Welches Buch kannst du mir empfehlen?" },
+      { de: "die Voraussetzung, -en", ru: "предпосылка, обязательное условие", ex: "Gute Deutschkenntnisse sind eine Voraussetzung." }
+    ],
+    dialogues: [
+      { speaker: "Personalchef", de: "Guten Tag, Herr Weber. Erzählen Sie bitte, warum Sie bei uns arbeiten möchten.", ru: "Добрый день, господин Вебер. Расскажите, пожалуйста, почему Вы хотите у нас работать." },
+      { speaker: "Weber", de: "Ich bewerbe mich bei Ihnen, weil Ihr Unternehmen international führend ist.", ru: "Я подаю резюме к вам, потому что ваша компания является международным лидером." },
+      { speaker: "Personalchef", de: "Als Sie an der Universität studierten, haben Sie auch ein Praktikum gemacht?", ru: "Когда Вы учились в университете, Вы также проходили практику?" },
+      { speaker: "Weber", de: "Ja, während meines Studiums arbeitete ich sechs Monate bei einer Softwarefirma.", ru: "Да, во время учебы я полгода работал в софтверной компании." },
+      { speaker: "Personalchef", de: "Das klingt überzeugend! Wann könnten Sie bei uns anfangen?", ru: "Звучит убедительно! Когда бы Вы могли у нас начать?" }
+    ],
+    grammarQuestions: [
+      { type: "mc", q: "Выберите правильный порядок слов после weil: «Ich bleibe zu Hause, weil...»", options: ["...ich bin krank.", "...ich krank bin.", "...bin ich krank.", "...krank ich bin."], a: "...ich krank bin.", exp: "После союза weil спрягаемый глагол уходит в самый конец предложения." },
+      { type: "mc", q: "Какой союз используется для ОДНОКРАТНОГО события в прошлом: «Когда мне было 6 лет, я пошел в школу»?", options: ["Wenn", "Als", "Wann", "Weil"], a: "Als", exp: "Союз als используется для однократных действий в прошлом." },
+      { type: "input", q: "Впишите глагол sein в форме Präteritum: «Gestern ___ ich sehr müde.»", a: "war", exp: "Präteritum от sein: ich war, du warst, er war." },
+      { type: "mc", q: "Выберите правильную форму в Genitiv: «Trotz ___ (der Regen) gehen wir spazieren.»", options: ["dem Regen", "den Regen", "des Regens", "der Regen"], a: "des Regens", exp: "В Genitiv мужской род получает артикль des, а к существительному добавляется окончание -(e)s: des Regens." },
+      { type: "input", q: "Впишите глагол haben в форме Präteritum: «Als Kind ___ er einen Hund.»", a: "hatte", exp: "Präteritum от haben: ich hatte, er hatte." },
+      { type: "mc", q: "Какой союз переводится как «хотя / несмотря на то, что» и отправляет глагол в конец?", options: ["trotzdem", "obwohl", "deshalb", "denn"], a: "obwohl", exp: "Obwohl — подчинительный союз (глагол в конце). Trotzdem — наречие (глагол сразу после него)." },
+      { type: "mc", q: "Как правильно продолжить предложение: «Wenn es morgen regnet, ...»?", options: ["...wir bleiben zu Hause.", "...bleiben wir zu Hause.", "...zu Hause wir bleiben.", "...wir zu Hause bleiben."], a: "...bleiben wir zu Hause.", exp: "Если придаточное стоит перед главным, главное начинается сразу со спрягаемого глагола." },
+      { type: "input", q: "Впишите правильный артикль в Genitiv: «Während ___ (die Pause) trinken wir Tee.»", a: "der", exp: "Женский род die в падеже Genitiv меняется на der." }
+    ]
+  },
+  {
+    id: "b2_1",
+    level: "B2",
+    title: "Модуль 5: Сослагательное наклонение Konjunktiv II",
+    subtitle: "Нереальные желания, условные предложения, вежливые просьбы и сожаления о прошлом",
+    color: "#ec4899",
+    icon: "fa-wand-magic-sparkles",
+    grammarHTML: `
+      <div class="space-y-6">
+        <div class="bg-pink-50 border-l-4 border-pink-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-pink-900 mb-1">1. Konjunktiv II в настоящем времени (Gegenwart)</h4>
+          <p class="text-sm text-pink-800">Используется для выражения нереальных условий («если бы...»), мечтаний и вежливости.<br>
+          • <b>Универсальная формула</b> для большинства глаголов: <b>würde + Infinitiv</b>:<br>
+          <i>Ich <b>würde</b> dir gerne <b>helfen</b>, wenn ich Zeit <b>hätte</b>.</i><br>
+          • <b>Собственные формы</b> (используются всегда без würde):<br>
+          — <b>sein → wäre</b> (ich wäre, du wärst, er wäre, wir wären)<br>
+          — <b>haben → hätte</b> (ich hätte, du hättest, er hätte, wir hätten)<br>
+          — Модальные глаголы получают умляут: <b>könnte, müsste, dürfte, sollte</b> (кроме <i>wollte</i> — без умляута).</p>
+        </div>
+        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-purple-900 mb-1">2. Konjunktiv II в прошедшем времени (Vergangenheit — сожаления о прошлом)</h4>
+          <p class="text-sm text-purple-800">Единственная формула для ВСЕХ глаголов: <b>hätte / wäre + Partizip II</b>!<br>
+          • <i>Wenn ich das gewusst <b>hätte</b>, <b>wäre</b> ich früher <b>gekommen</b>!</i> (Если бы я это тогда знал, я бы пришел раньше!)</p>
+        </div>
+      </div>
+    `,
+    vocab: [
+      { de: "an deiner Stelle", ru: "на твоем месте", ex: "An deiner Stelle würde ich zum Arzt gehen." },
+      { de: "so tun, als ob", ru: "делать вид, как будто", ex: "Er tut so, als ob er alles wüsste." },
+      { de: "die Gelegenheit, -en", ru: "возможность, удобный случай", ex: "Hätte ich die Gelegenheit, würde ich sofort reisen." },
+      { de: "bereuen", ru: "сожалеть, раскаиваться", ex: "Ich bereue diese Entscheidung überhaupt nicht." },
+      { de: "die Bedingung, -en", ru: "условие", ex: "Unter dieser Bedingung würde ich den Vertrag unterschreiben." },
+      { de: "vermeiden (vermied, hat vermieden)", ru: "избегать", ex: "Man hätte diesen Fehler leicht vermeiden können." },
+      { de: "ratsam", ru: "целесообразный, разумный", ex: "Es wäre ratsam, vorher zu reservieren." },
+      { de: "vorausgesetzt, dass", ru: "при условии, что", ex: "Wir fahren ans Meer, vorausgesetzt, dass das Wetter gut ist." },
+      { de: "der Vorschlag, ¨-e", ru: "предложение (идея)", ex: "Hättest du einen besseren Vorschlag?" },
+      { de: "einverstanden sein", ru: "быть согласным", ex: "Wären Sie damit einverstanden?" },
+      { de: "sich leisten (+ Akk.)", ru: "позволить себе (финансово)", ex: "Wenn ich reich wäre, könnte ich mir eine Yacht leisten." },
+      { de: "überzeugen", ru: "убеждать", ex: "Das Argument hat mich vollkommen überzeugt." },
+      { de: "notwendig", ru: "необходимый", ex: "Wäre es notwendig, noch einmal anzurufen?" },
+      { de: "anbieten (bot an, hat angeboten)", ru: "предлагать", ex: "Darf ich Ihnen eine Tasse Kaffee anbieten?" },
+      { de: "bevorzugen", ru: "предпочитать", ex: "Ich würde eine Wohnung im Zentrum bevorzugen." }
+    ],
+    dialogues: [
+      { speaker: "Julia", de: "Sag mal, Lukas: Was würdest du machen, wenn du eine Million Euro im Lotto gewinnen würdest?", ru: "Скажи-ка, Лукас: что бы ты сделал, если бы выиграл миллион евро в лотерею?" },
+      { speaker: "Lukas", de: "Wenn ich so viel Geld hätte, würde ich zuerst ein großes Haus am Meer kaufen.", ru: "Если бы у меня было столько денег, я бы сначала купил большой дом у моря." },
+      { speaker: "Julia", de: "Und würdest du weiter arbeiten?", ru: "А ты бы продолжал работать?" },
+      { speaker: "Lukas", de: "Ich wäre nicht mehr jeden Tag im Büro, aber ich würde mein eigenes Startup gründen.", ru: "Я бы больше не сидел каждый день в офисе, но основал бы собственный стартап." },
+      { speaker: "Julia", de: "Ach, hätten wir gestern bloß ein Lottolos gekauft!", ru: "Эх, если бы мы только вчера купили лотерейный билет!" }
+    ],
+    grammarQuestions: [
+      { type: "input", q: "Впишите форму Konjunktiv II от глагола sein для ich/er/sie: «Wenn ich reich ___, ...»", a: "wäre", exp: "От глагола sein (Präteritum: war) с добавлением умляута образуется форма wäre." },
+      { type: "input", q: "Впишите форму Konjunktiv II от глагола haben для ich/er/sie: «Wenn er mehr Zeit ___, ...»", a: "hätte", exp: "От глагола haben (Präteritum: hatte) с умляутом образуется форма hätte." },
+      { type: "mc", q: "Как вежливо попросить: «Не могли бы Вы мне помочь?»", options: ["Können Sie mir geholfen?", "Könnten Sie mir bitte helfen?", "Würden Sie mir helfen können?", "Konnten Sie mir helfen?"], a: "Könnten Sie mir bitte helfen?", exp: "Модальный глагол können в Konjunktiv II приобретает умляут: könnten." },
+      { type: "mc", q: "Выберите правильную конструкцию Konjunktiv II ПРОШЕДШЕГО времени: «Если бы я это знал вчера!»", options: ["Wenn ich das wüsste!", "Wenn ich das wissen würde!", "Wenn ich das gewusst hätte!", "Wenn ich das gewusst wäre!"], a: "Wenn ich das gewusst hätte!", exp: "Сожаление о прошлом строится строго по схеме hätte/wäre + Partizip II: gewusst hätte." },
+      { type: "mc", q: "Выберите правильную форму для глагола движения в прошлом Konjunktiv II: «Я бы вчера пришел раньше, но был в пробке»", options: ["Ich würde früher kommen", "Ich hätte früher gekommen", "Ich wäre früher gekommen", "Ich käme gestern früher"], a: "Ich wäre früher gekommen", exp: "Глагол kommen требует sein, поэтому в Konjunktiv II прошлого времени используется wäre + Partizip II." },
+      { type: "input", q: "Впишите вспомогательный глагол для аналитической формы Konjunktiv II: «An deiner Stelle ___ ich das nicht kaufen.»", a: "würde", exp: "Для 1-го и 3-го лица ед.ч. используется форма würde + Infinitiv." },
+      { type: "mc", q: "Как переводится конструкция «Er tut so, als ob er krank wäre»?", options: ["Он заболел, потому что устал", "Он делает вид, будто он болен", "Даже если бы он был болен", "Он должен был заболеть"], a: "Он делает вид, будто он болен", exp: "Союз als ob (как будто) всегда требует после себя Konjunktiv II." },
+      { type: "input", q: "Впишите форму Konjunktiv II от модального глагола müssen (ich/er): «Eigentlich ___ ich jetzt lernen.» (Вообще-то мне следовало бы сейчас учиться)", a: "müsste", exp: "Модальный глагол müssen в Konjunktiv II сохраняет умляут: ich/er müsste." }
+    ]
+  },
+  {
+    id: "b2_2",
+    level: "B2",
+    title: "Модуль 6: Косвенная речь (Konjunktiv I) и Пассивный залог (Passiv)",
+    subtitle: "Передача чужих слов в новостях и науке, Vorgangspassiv (werden) и Zustandspassiv (sein)",
+    color: "#10b981",
+    icon: "fa-newspaper",
+    grammarHTML: `
+      <div class="space-y-6">
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-emerald-900 mb-1">1. Косвенная речь и Konjunktiv I</h4>
+          <p class="text-sm text-emerald-800">Используется в прессе, новостях и официальных отчетах для нейтральной передачи чужих слов (дистанцирование от факта).<br>
+          • Образуется от основы <b>Infinitiv</b> + суффикс <b>-e-</b>. Важнейшая форма — 3-е лицо ед. числа (<b>er/sie/es</b>):<br>
+          — <b>sein → er sei</b> (множ. ч.: <b>sie seien</b>)<br>
+          — <b>haben → er habe</b><br>
+          — <b>kommen → er komme</b><br>
+          — <b>können → er könne</b><br>
+          <i>Der Minister sagte, die Situation <b>sei</b> stabil und man <b>habe</b> einen Plan.</i></p>
+        </div>
+        <div class="bg-teal-50 border-l-4 border-teal-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-lg text-teal-900 mb-1">2. Пассивный залог (Passiv)</h4>
+          <p class="text-sm text-teal-800">• <b>Passiv процесса (Vorgangspassiv):</b> <b>werden + Partizip II</b><br>
+          — Präsens Passiv: <i>Das Haus <b>wird</b> gebaut.</i> (Дом строится)<br>
+          — Präteritum Passiv: <i>Das Haus <b>wurde</b> gebaut.</i> (Дом строился / был построен)<br>
+          — Perfekt Passiv: <i>Das Haus <b>ist</b> gebaut <b>worden</b>.</i><br>
+          • <b>Passiv состояния (Zustandspassiv):</b> <b>sein + Partizip II</b> (результат): <i>Das Fenster <b>ist</b> geöffnet.</i></p>
+        </div>
+      </div>
+    `,
+    vocab: [
+      { de: "behaupten", ru: "утверждать, заявлять", ex: "Der Zeuge behauptet, er habe nichts gesehen." },
+      { de: "berichten (über + Akk.)", ru: "сообщать, делать репортаж", ex: "Die Medien berichten über die neuen Gesetze." },
+      { de: "laut (+ Dat.)", ru: "согласно (чему-л.)", ex: "Laut einem Bericht wächst die Wirtschaft." },
+      { de: "durchführen", ru: "проводить, осуществлять", ex: "Das Experiment wurde erfolgreich durchgeführt." },
+      { de: "veröffentlichen", ru: "опубликовывать", ex: "Die Ergebnisse werden morgen veröffentlicht." },
+      { de: "gründen", ru: "основывать, учреждать", ex: "Die Universität wurde im Jahr 1948 gegründet." },
+      { de: "überprüfen", ru: "проверять, инспектировать", ex: "Alle Dokumente müssen sorgfältig überprüft werden." },
+      { de: "die Maßnahme, -n", ru: "мера, мероприятие", ex: "Die Regierung hat neue Maßnahmen beschlossen." },
+      { de: "betonen", ru: "подчеркивать, делать акцент", ex: "Die Sprecherin betonte, man suche nach einer Lösung." },
+      { de: "die Ursache, -n", ru: "причина", ex: "Die Ursache des Unfalls wird noch untersucht." },
+      { de: "widersprechen (+ Dat.)", ru: "противоречить, возражать", ex: "Der Politiker widersprach den Vorwürfen." },
+      { de: "bestätigen", ru: "подтверждать", ex: "Der Termin wurde offiziell bestätigt." },
+      { de: "die Verhandlung, -en", ru: "переговоры", ex: "Die Verhandlungen wurden gestern fortgesetzt." },
+      { de: "erwähnen", ru: "упоминать", ex: "Er erwähnte, dass er bald verreisen werde." },
+      { de: "beschließen (beschloss, hat beschlossen)", ru: "постановлять, принимать решение", ex: "Das Gesetz wurde vom Parlament beschlossen." }
+    ],
+    dialogues: [
+      { speaker: "Moderator", de: "Guten Abend! Heute wurde im Parlament über das neue Bildungsgesetz diskutiert.", ru: "Добрый вечер! Сегодня в парламенте обсуждался новый закон об образовании." },
+      { speaker: "Reporterin", de: "Ja, genau. Der Bildungsminister erklärte in seiner Rede, die Reform sei dringend notwendig.", ru: "Да, верно. Министр образования заявил в своей речи, что реформа срочно необходима." },
+      { speaker: "Moderator", de: "Was sagt die Opposition dazu? Wurde der Entwurf bereits unterstützt?", ru: "Что говорит оппозиция по этому поводу? Проект уже был поддержан?" },
+      { speaker: "Reporterin", de: "Nein, die Opposition behauptet, das Projekt koste zu viel Geld und müsse überarbeitet werden.", ru: "Нет, оппозиция утверждает, что проект стоит слишком много денег и должен быть переработан." }
+    ],
+    grammarQuestions: [
+      { type: "input", q: "Впишите форму Konjunktiv I от глагола sein для 3-го лица ед. числа (er/sie/es): «Er sagt, er ___ krank.»", a: "sei", exp: "Глагол sein в Konjunktiv I имеет уникальные формы: ich sei, du seiest, er/sie/es sei." },
+      { type: "mc", q: "Выберите правильную форму Konjunktiv I: «Die Politikerin betonte, sie ___ (haben) keine Zeit.»", options: ["hat", "habe", "hätte", "haben"], a: "habe", exp: "В 3-м лице ед.ч. Konjunktiv I образуется от основы инфинитива + окончание -e: hab-e." },
+      { type: "mc", q: "Как образуется настоящее время пассивного залога (Präsens Passiv)?", options: ["sein + Infinitiv", "haben + Partizip II", "werden + Partizip II", "würde + Partizip II"], a: "werden + Partizip II", exp: "Пассив процесса (Vorgangspassiv) всегда строится с помощью глагола werden + Partizip II." },
+      { type: "input", q: "Впишите правильную форму глагола werden в Präteritum Passiv: «Das Auto ___ gestern repariert.»", a: "wurde", exp: "В прошедшем времени Präteritum Passiv используется форма wurde (множ. ч. — wurden) + Partizip II." },
+      { type: "mc", q: "Какой предлог используется в Passiv для указания живого исполнителя (агента действия)?", options: ["durch + Akk.", "von + Dat.", "mit + Dat.", "bei + Dat."], a: "von + Dat.", exp: "Для одушевленного лица или организации в Passiv используется предлог von + Dativ." },
+      { type: "mc", q: "Выберите правильную форму Konjunktiv I для модального глагола: «Der Arzt sagt, der Patient ___ (müssen) im Bett bleiben.»", options: ["muss", "müsse", "müsste", "musste"], a: "müsse", exp: "В Konjunktiv I (в отличие от изъявительного наклонения) сохраняется корневой умляут инфинитива + окончание -e: er müsse." },
+      { type: "mc", q: "Что делать в косвенной речи, если форма Konjunktiv I совпадает с обычным Präsens (например: sie machen)?", options: ["Оставить Präsens", "Заменить на Konjunktiv II (machen → machten / würden machen)", "Использовать Passiv", "Поставить Infinitiv"], a: "Заменить на Konjunktiv II (machen → machten / würden machen)", exp: "Если форма Konjunktiv I неотличима от Indikativ (Präsens), она заменяется на Konjunktiv II или конструкцию с würden." },
+      { type: "input", q: "Впишите специальную форму Partizip II от глагола werden в Perfekt Passiv: «Das Haus ist gebaut ___.»", a: "worden", exp: "В Perfekt Passiv вместо geworden используется краткая форма без приставки ge-: worden." }
+    ]
   }
 ];
 
-function switchTab(tab) {
-  renderPath();
+// ============================================================================
+// 2. БАЗА СИЛЬНЫХ И НЕПРАВИЛЬНЫХ ГЛАГОЛОВ (35 ключевых глаголов)
+// ============================================================================
+const STRONG_VERBS = [
+  { inf: "sein", pres: "ist", pret: "war", part: "ist gewesen", ru: "быть" },
+  { inf: "haben", pres: "hat", pret: "hatte", part: "hat gehabt", ru: "иметь" },
+  { inf: "werden", pres: "wird", pret: "wurde", part: "ist geworden", ru: "становиться" },
+  { inf: "gehen", pres: "geht", pret: "ging", part: "ist gegangen", ru: "идти, ходить" },
+  { inf: "kommen", pres: "kommt", pret: "kam", part: "ist gekommen", ru: "приходить" },
+  { inf: "fahren", pres: "fährt", pret: "fuhr", part: "ist gefahren", ru: "ехать" },
+  { inf: "fliegen", pres: "fliegt", pret: "flog", part: "ist geflogen", ru: "летать" },
+  { inf: "bleiben", pres: "bleibt", pret: "blieb", part: "ist geblieben", ru: "оставаться" },
+  { inf: "sehen", pres: "sieht", pret: "sah", part: "hat gesehen", ru: "видеть" },
+  { inf: "geben", pres: "gibt", pret: "gab", part: "hat gegeben", ru: "давать" },
+  { inf: "nehmen", pres: "nimmt", pret: "nahm", part: "hat genommen", ru: "брать" },
+  { inf: "sprechen", pres: "spricht", pret: "sprach", part: "hat gesprochen", ru: "говорить" },
+  { inf: "essen", pres: "isst", pret: "aß", part: "hat gegessen", ru: "есть, кушать" },
+  { inf: "trinken", pres: "trinkt", pret: "trank", part: "hat getrunken", ru: "пить" },
+  { inf: "schlafen", pres: "schläft", pret: "schlief", part: "hat geschlafen", ru: "спать" },
+  { inf: "lesen", pres: "liest", pret: "las", part: "hat gelesen", ru: "читать" },
+  { inf: "schreiben", pres: "schreibt", pret: "schrieb", part: "hat geschrieben", ru: "писать" },
+  { inf: "finden", pres: "findet", pret: "fand", part: "hat gefunden", ru: "находить" },
+  { inf: "helfen", pres: "hilft", pret: "half", part: "hat geholfen", ru: "помогать" },
+  { inf: "wissen", pres: "weiß", pret: "wusste", part: "hat gewusst", ru: "знать (факт)" },
+  { inf: "kennen", pres: "kennt", pret: "kannte", part: "hat gekannt", ru: "знать (быть знакомым)" },
+  { inf: "denken", pres: "denkt", pret: "dachte", part: "hat gedacht", ru: "думать" },
+  { inf: "bringen", pres: "bringt", pret: "brachte", part: "hat gebracht", ru: "приносить" },
+  { inf: "verstehen", pres: "versteht", pret: "verstand", part: "hat verstanden", ru: "понимать" },
+  { inf: "beginnen", pres: "beginnt", pret: "begann", part: "hat begonnen", ru: "начинать" },
+  { inf: "gewinnen", pres: "gewinnt", pret: "gewann", part: "hat gewonnen", ru: "выигрывать" },
+  { inf: "verlieren", pres: "verliert", pret: "verlor", part: "hat verloren", ru: "терять, проигрывать" },
+  { inf: "tragen", pres: "trägt", pret: "trug", part: "hat getragen", ru: "носить (одежду)" },
+  { inf: "waschen", pres: "wäscht", pret: "wusch", part: "hat gewaschen", ru: "мыть, стирать" },
+  { inf: "laufen", pres: "läuft", pret: "lief", part: "ist gelaufen", ru: "бегать" },
+  { inf: "rufen", pres: "ruft", pret: "rief", part: "hat gerufen", ru: "звать, кричать" },
+  { inf: "entscheiden", pres: "entscheidet", pret: "entschied", part: "hat entschieden", ru: "решать" },
+  { inf: "schließen", pres: "schließt", pret: "schloss", part: "hat geschlossen", ru: "закрывать" },
+  { inf: "anbieten", pres: "bietet an", pret: "bot an", part: "hat angeboten", ru: "предлагать" },
+  { inf: "empfehlen", pres: "empfiehlt", pret: "empfahl", part: "hat empfohlen", ru: "рекомендовать" }
+];
+
+// ============================================================================
+// 3. СОСТОЯНИЕ ПРИЛОЖЕНИЯ И ОЗВУЧКА
+// ============================================================================
+let state = {
+  xp: parseInt(localStorage.getItem('dl_xp') || '120'),
+  streak: parseInt(localStorage.getItem('dl_streak') || '3'),
+  hearts: 5,
+  completedModules: JSON.parse(localStorage.getItem('dl_completed') || '[]'),
+  currentTab: 'path',
+  activeModuleId: null,
+  activeSubTab: 'grammar', // grammar | flashcards | dialogue | quiz
+  // Состояние флеш-карт
+  fcList: [],
+  fcIndex: 0,
+  fcFlipped: false,
+  // Состояние теста
+  quizQuestions: [],
+  quizIndex: 0,
+  quizScore: 0,
+  quizAnswered: false
+};
+
+function saveState() {
+  localStorage.setItem('dl_xp', state.xp);
+  localStorage.setItem('dl_streak', state.streak);
+  localStorage.setItem('dl_completed', JSON.stringify(state.completedModules));
+  updateStatsUI();
 }
 
-function renderPath() {
-  document.getElementById('header-title').innerText = "Карта уроков немецкого языка";
+function resetProgress() {
+  if (confirm("Сбросить весь прогресс обучения?")) {
+    localStorage.clear();
+    state.xp = 0;
+    state.completedModules = [];
+    state.hearts = 5;
+    updateStatsUI();
+    switchTab('path');
+  }
+}
+
+function updateStatsUI() {
+  document.getElementById('stat-xp').innerText = state.xp;
+  document.getElementById('stat-streak').innerText = state.streak;
+  document.getElementById('stat-hearts').innerText = state.hearts;
+  const pct = Math.round((state.completedModules.length / MODULES.length) * 100);
+  document.getElementById('sidebar-progress-bar').style.width = pct + '%';
+  document.getElementById('sidebar-completed-text').innerText = `${state.completedModules.length} из ${MODULES.length} тем пройдено`;
+}
+
+// Синтез немецкой речи
+function speakGerman(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  // Очищаем грамматические пометки в скобках для чистого чтения
+  const cleanText = text.replace(/\(.*?\)/g, '').replace(/¨-er|¨-e|¨-|-en|-n|-e/g, '').trim();
+  const utter = new SpeechSynthesisUtterance(cleanText);
+  utter.lang = 'de-DE';
+  utter.rate = 0.92;
+  window.speechSynthesis.speak(utter);
+}
+
+// ============================================================================
+// 4. НАВИГАЦИЯ ПО ВКЛАДКАМ
+// ============================================================================
+function switchTab(tab) {
+  state.currentTab = tab;
+  const tabs = ['path', 'verbs', 'grammar', 'phonetics'];
+  tabs.forEach(t => {
+    const btn = document.getElementById('nav-' + t);
+    if (t === tab) {
+      btn.className = "w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider bg-blue-50 text-[#1cb0f6] border-2 border-[#1cb0f6]";
+    } else {
+      btn.className = "w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent";
+    }
+  });
+
+  if (tab === 'path') renderPathView();
+  if (tab === 'verbs') renderVerbsView();
+  if (tab === 'grammar') renderGrammarRefView();
+  if (tab === 'phonetics') renderPhoneticsView();
+}
+
+// ============================================================================
+// 5. ЭКРАН 1: КАРТА КУРСОВ (В СТИЛЕ DUOLINGO)
+// ============================================================================
+function renderPathView() {
   const container = document.getElementById('main-container');
-  let html = `<div class="max-w-3xl mx-auto space-y-6">`;
-  
-  MODULES.forEach((m) => {
-    const isDone = completedModules.includes(m.id);
+  let html = `
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-gradient-to-r from-[#58cc02] to-[#2eb82e] rounded-3xl p-8 text-white mb-10 shadow-[0_6px_0_#46a302] flex flex-col md:flex-row items-center justify-between">
+        <div>
+          <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">Полный интерактивный курс</span>
+          <h1 class="text-3xl font-black mt-2 mb-2">Путь изучения немецкого языка</h1>
+          <p class="text-white/90 text-sm font-semibold max-w-xl">В каждом модуле вас ждут: грамматические таблицы, 3D флеш-карты с озвучкой, живой диалог и тест на 18 вопросов (выбор ответа + письменный ввод).</p>
+        </div>
+        <div class="mt-6 md:mt-0 text-6xl">🥨</div>
+      </div>
+
+      <div class="space-y-6">
+  `;
+
+  MODULES.forEach((mod, idx) => {
+    const isDone = state.completedModules.includes(mod.id);
+    const badgeColor = mod.level === 'A1' ? 'bg-green-100 text-green-700' :
+                       mod.level === 'A2' ? 'bg-amber-100 text-amber-700' :
+                       mod.level === 'B1' ? 'bg-purple-100 text-purple-700' : 'bg-pink-100 text-pink-700';
+
     html += `
-      <div class="card-duo p-6 flex items-center justify-between bg-white">
-        <div class="flex items-center space-x-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-md" style="background-color: ${m.color}">
-            <i class="fa-solid ${m.icon}"></i>
+      <div class="card-duo p-6 flex flex-col md:flex-row items-start md:items-center justify-between hover:border-gray-300 transition">
+        <div class="flex items-start space-x-5">
+          <div style="background-color: ${mod.color}" class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl shrink-0 shadow-md">
+            <i class="fa-solid ${mod.icon}"></i>
           </div>
           <div>
-            <span class="text-xs font-black px-2 py-0.5 rounded bg-gray-100 text-gray-600">${m.level}</span>
-            <h3 class="font-black text-lg text-gray-800 mt-1">${m.title}</h3>
-            <p class="text-xs text-gray-500 mt-0.5">${m.subtitle}</p>
+            <div class="flex items-center space-x-3 mb-1">
+              <span class="px-3 py-0.5 rounded-full text-xs font-black uppercase ${badgeColor}">Уровень ${mod.level}</span>
+              ${isDone ? `<span class="text-xs font-black text-[#58cc02] flex items-center space-x-1"><i class="fa-solid fa-circle-check"></i><span>Пройдено!</span></span>` : ''}
+            </div>
+            <h3 class="text-xl font-black text-gray-800">${mod.title}</h3>
+            <p class="text-sm text-gray-500 font-semibold mt-1">${mod.subtitle}</p>
+            <div class="flex flex-wrap gap-3 mt-3 text-xs font-bold text-gray-400">
+              <span><i class="fa-solid fa-layer-group mr-1"></i>${mod.vocab.length} флеш-карт</span>
+              <span><i class="fa-solid fa-comments mr-1"></i>Диалог с озвучкой</span>
+              <span><i class="fa-solid fa-clipboard-check mr-1"></i>18 тестовых заданий</span>
+            </div>
           </div>
         </div>
-        <button onclick="startLesson('${m.id}')" class="btn-duo-green px-6 py-2.5 rounded-xl font-black text-sm uppercase">
-          ${isDone ? 'Повторить' : 'Начать'}
-        </button>
+        <div class="mt-4 md:mt-0 w-full md:w-auto shrink-0">
+          <button onclick="openModule('${mod.id}')" class="w-full md:w-auto btn-duo-green px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center space-x-2">
+            <span>${isDone ? 'Повторить' : 'Начать урок'}</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
       </div>
     `;
   });
-  html += `</div>`;
+
+  html += `</div></div>`;
   container.innerHTML = html;
 }
 
-function startLesson(id) {
-  const m = MODULES.find(item => item.id === id);
-  document.getElementById('header-title').innerText = m.title;
+// ============================================================================
+// 6. ОТКРЫТИЕ МОДУЛЯ (ГРАММАТИКА, ФЛЕШ-КАРТЫ, ДИАЛОГ, ТЕСТ НА 18 ВОПРОСОВ)
+// ============================================================================
+function openModule(modId, subTab = 'grammar') {
+  state.activeModuleId = modId;
+  state.activeSubTab = subTab;
+  const mod = MODULES.find(m => m.id === modId);
+  if (!mod) return;
+
+  // Инициализация флеш-карт при входе
+  if (subTab === 'flashcards' && state.fcList.length === 0) {
+    state.fcList = [...mod.vocab];
+    state.fcIndex = 0;
+    state.fcFlipped = false;
+  }
+
+  // Генерация 18 вопросов при открытии вкладки теста
+  if (subTab === 'quiz') {
+    generateQuizForModule(mod);
+  }
+
+  renderModuleScreen();
+}
+
+function switchModuleSubTab(subTab) {
+  const mod = MODULES.find(m => m.id === state.activeModuleId);
+  state.activeSubTab = subTab;
+  if (subTab === 'flashcards') {
+    state.fcList = [...mod.vocab];
+    state.fcIndex = 0;
+    state.fcFlipped = false;
+  }
+  if (subTab === 'quiz') {
+    generateQuizForModule(mod);
+  }
+  renderModuleScreen();
+}
+
+function renderModuleScreen() {
+  const mod = MODULES.find(m => m.id === state.activeModuleId);
   const container = document.getElementById('main-container');
 
-  let vocabHtml = m.vocab.map(v => `
-    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-200">
-      <span class="font-bold text-gray-800">${v.de}</span>
-      <span class="text-gray-500 text-sm">${v.ru}</span>
-      <button onclick="speak('${v.de}')" class="text-[#1cb0f6]"><i class="fa-solid fa-volume-high"></i></button>
-    </div>
-  `).join('');
+  const subTabs = [
+    { id: 'grammar', label: '1. Грамматика и Словарь', icon: 'fa-book-open' },
+    { id: 'flashcards', label: '2. 3D Флеш-карты', icon: 'fa-clone' },
+    { id: 'dialogue', label: '3. Диалог и Произношение', icon: 'fa-comments' },
+    { id: 'quiz', label: '4. Большой Тест (18 вопросов)', icon: 'fa-graduation-cap' }
+  ];
 
-  let optionsHtml = m.question.options.map(opt => `
-    <button onclick="checkAnswer('${opt}', '${m.question.a}', '${m.id}')" class="w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-[#1cb0f6] font-bold bg-white shadow-sm transition">${opt}</button>
-  `).join('');
+  let navHtml = subTabs.map(t => {
+    const active = state.activeSubTab === t.id;
+    return `
+      <button onclick="switchModuleSubTab('${t.id}')" class="px-4 py-2.5 rounded-xl font-extrabold text-sm flex items-center space-x-2 transition ${active ? 'bg-[#1cb0f6] text-white shadow-[0_3px_0_#1899d6]' : 'bg-white text-gray-600 border-2 border-gray-200 hover:bg-gray-50'}">
+        <i class="fa-solid ${t.icon}"></i>
+        <span>${t.label}</span>
+      </button>
+    `;
+  }).join('');
+
+  let contentHtml = '';
+  if (state.activeSubTab === 'grammar') contentHtml = getGrammarAndVocabHTML(mod);
+  if (state.activeSubTab === 'flashcards') contentHtml = getFlashcardsHTML(mod);
+  if (state.activeSubTab === 'dialogue') contentHtml = getDialogueHTML(mod);
+  if (state.activeSubTab === 'quiz') contentHtml = getQuizHTML(mod);
 
   container.innerHTML = `
-    <div class="max-w-2xl mx-auto space-y-6">
-      <button onclick="renderPath()" class="text-gray-500 font-bold hover:underline mb-4"><i class="fa-solid fa-arrow-left"></i> Назад к карте</button>
-      
-      <div class="card-duo p-6 bg-white space-y-4">
-        <h3 class="font-black text-xl text-gray-800">📖 Теория</h3>
-        <p class="text-gray-600 leading-relaxed">${m.theory}</p>
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center justify-between mb-6">
+        <button onclick="renderPathView()" class="btn-duo-gray px-4 py-2 rounded-xl font-extrabold text-sm flex items-center space-x-2">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>К карте курсов</span>
+        </button>
+        <span class="px-3 py-1 rounded-full bg-gray-200 text-gray-700 font-black text-xs uppercase">Уровень ${mod.level}</span>
       </div>
 
-      <div class="card-duo p-6 bg-white space-y-3">
-        <h3 class="font-black text-xl text-gray-800">🗣 Словарь урока</h3>
-        <div class="space-y-2">${vocabHtml}</div>
+      <h2 class="text-2xl md:text-3xl font-black text-gray-800 mb-2">${mod.title}</h2>
+      <p class="text-gray-500 font-semibold mb-6">${mod.subtitle}</p>
+
+      <div class="flex flex-wrap gap-2 mb-8">
+        ${navHtml}
       </div>
 
-      <div class="card-duo p-6 bg-white space-y-4" id="quiz-box">
-        <h3 class="font-black text-xl text-gray-800">✍️ Проверка знаний</h3>
-        <p class="font-bold text-gray-700 text-lg">${m.question.q}</p>
-        <div class="space-y-2">${optionsHtml}</div>
+      <div>
+        ${contentHtml}
       </div>
     </div>
   `;
 }
 
-function checkAnswer(selected, correct, id) {
-  const box = document.getElementById('quiz-box');
-  if (selected === correct) {
-    if (!completedModules.includes(id)) {
-      completedModules.push(id);
-      localStorage.setItem('dp_completed', JSON.stringify(completedModules));
-      xp += 15;
-      updateStats();
-    }
-    box.innerHTML = `
-      <div class="p-6 bg-green-50 border-2 border-green-500 rounded-2xl text-center space-y-4">
-        <h3 class="font-black text-2xl text-green-700">🎉 Правильно! +15 XP</h3>
-        <button onclick="renderPath()" class="btn-duo-green px-8 py-3 rounded-xl font-black uppercase">Продолжить</button>
+// Подвкладка 1: Грамматика + Таблица слов с озвучкой
+function getGrammarAndVocabHTML(mod) {
+  let vocabRows = mod.vocab.map(v => `
+    <tr class="hover:bg-gray-50">
+      <td class="p-3 font-black text-gray-800 flex items-center space-x-3">
+        <button onclick="speakGerman('${v.de.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-lg bg-blue-50 text-[#1cb0f6] hover:bg-blue-100 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+        <span>${v.de}</span>
+      </td>
+      <td class="p-3 font-bold text-gray-600">${v.ru}</td>
+      <td class="p-3 text-sm text-gray-500 italic">
+        <span onclick="speakGerman('${v.ex.replace(/'/g, "\\'")}')" class="cursor-pointer hover:text-[#1cb0f6]"><i class="fa-solid fa-play text-xs mr-1"></i>${v.ex}</span>
+      </td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="space-y-8">
+      <div class="card-duo p-6">
+        <h3 class="text-xl font-black text-gray-800 mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-wand-sparkles text-[#ffc800]"></i>
+          <span>Грамматический разбор темы</span>
+        </h3>
+        ${mod.grammarHTML}
+      </div>
+
+      <div class="card-duo p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-black text-gray-800">Активный словарь урока (${mod.vocab.length} слов)</h3>
+          <span class="text-xs font-bold text-gray-400">Нажмите на динамик для прослушивания</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b-2 border-gray-200 text-xs font-black uppercase text-gray-400">
+                <th class="p-3">Немецкое слово</th>
+                <th class="p-3">Перевод</th>
+                <th class="p-3">Пример в контексте (кликните для озвучки)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              ${vocabRows}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="switchModuleSubTab('flashcards')" class="btn-duo-green px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-wider">
+          Перейти к 3D флеш-картам <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Подвкладка 2: Интерактивные 3D флеш-карты с миксом
+function getFlashcardsHTML(mod) {
+  const card = state.fcList[state.fcIndex];
+  const total = state.fcList.length;
+
+  return `
+    <div class="card-duo p-8 flex flex-col items-center">
+      <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-6">
+        <span class="font-black text-gray-500 text-sm uppercase">Карточка ${state.fcIndex + 1} из ${total}</span>
+        <div class="flex space-x-2">
+          <button onclick="shuffleFlashcards()" class="btn-duo-yellow px-4 py-2 rounded-xl font-black text-xs uppercase flex items-center space-x-2">
+            <i class="fa-solid fa-shuffle"></i>
+            <span>Перемешать (Микс)</span>
+          </button>
+          <button onclick="speakGerman('${card.de.replace(/'/g, "\\'")}')" class="btn-duo-blue px-4 py-2 rounded-xl font-black text-xs uppercase flex items-center space-x-2">
+            <i class="fa-solid fa-volume-high"></i>
+            <span>Озвучить</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Карточка -->
+      <div onclick="flipCurrentCard()" class="w-full max-w-lg h-72 perspective cursor-pointer mb-8 ${state.fcFlipped ? 'flipped' : ''}">
+        <div class="flip-card-inner">
+          <!-- Лицевая сторона (Немецкий) -->
+          <div class="flip-card-front bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 flex flex-col items-center justify-center p-8 text-center shadow-md">
+            <span class="text-xs font-black uppercase text-[#1cb0f6] tracking-widest mb-3">Deutsch (Нажмите для переворота)</span>
+            <div class="text-3xl font-black text-gray-800 mb-4">${card.de}</div>
+            <div class="text-sm font-semibold text-gray-500 italic">"${card.ex}"</div>
+          </div>
+          <!-- Обратная сторона (Русский) -->
+          <div class="flip-card-back bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 flex flex-col items-center justify-center p-8 text-center shadow-md">
+            <span class="text-xs font-black uppercase text-[#58cc02] tracking-widest mb-3">Перевод</span>
+            <div class="text-3xl font-black text-gray-800 mb-3">${card.ru}</div>
+            <div class="text-sm font-bold text-gray-600">${card.de}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Кнопки навигации по карточкам -->
+      <div class="flex items-center space-x-4">
+        <button onclick="prevFlashcard()" class="btn-duo-gray px-5 py-3 rounded-2xl font-black text-sm">
+          <i class="fa-solid fa-chevron-left mr-1"></i> Назад
+        </button>
+        <button onclick="flipCurrentCard()" class="btn-duo-blue px-6 py-3 rounded-2xl font-black text-sm uppercase">
+          Перевернуть
+        </button>
+        <button onclick="nextFlashcard()" class="btn-duo-green px-5 py-3 rounded-2xl font-black text-sm">
+          Далее <i class="fa-solid fa-chevron-right ml-1"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function flipCurrentCard() {
+  state.fcFlipped = !state.fcFlipped;
+  renderModuleScreen();
+}
+
+function nextFlashcard() {
+  state.fcFlipped = false;
+  state.fcIndex = (state.fcIndex + 1) % state.fcList.length;
+  speakGerman(state.fcList[state.fcIndex].de);
+  renderModuleScreen();
+}
+
+function prevFlashcard() {
+  state.fcFlipped = false;
+  state.fcIndex = (state.fcIndex - 1 + state.fcList.length) % state.fcList.length;
+  speakGerman(state.fcList[state.fcIndex].de);
+  renderModuleScreen();
+}
+
+function shuffleFlashcards() {
+  for (let i = state.fcList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.fcList[i], state.fcList[j]] = [state.fcList[j], state.fcList[i]];
+  }
+  state.fcIndex = 0;
+  state.fcFlipped = false;
+  renderModuleScreen();
+}
+
+// Подвкладка 3: Живой диалог с озвучкой каждой реплики
+function getDialogueHTML(mod) {
+  let linesHtml = mod.dialogues.map((line, idx) => {
+    const isEven = idx % 2 === 0;
+    return `
+      <div class="flex ${isEven ? 'justify-start' : 'justify-end'}">
+        <div class="max-w-xl w-full md:w-4/5 p-5 rounded-2xl border-2 ${isEven ? 'bg-white border-gray-200' : 'bg-blue-50 border-blue-200'}">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-black uppercase ${isEven ? 'text-[#58cc02]' : 'text-[#1cb0f6]'}">${line.speaker}</span>
+            <button onclick="speakGerman('${line.de.replace(/'/g, "\\'")}')" class="text-gray-400 hover:text-[#1cb0f6] text-sm font-bold flex items-center space-x-1">
+              <i class="fa-solid fa-volume-high"></i>
+              <span class="text-xs">Слушать</span>
+            </button>
+          </div>
+          <p class="font-extrabold text-gray-800 text-base mb-1">${line.de}</p>
+          <p class="text-xs font-semibold text-gray-500">${line.ru}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="card-duo p-6 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-gray-100 pb-4">
+        <div>
+          <h3 class="text-xl font-black text-gray-800">Разговорная практика и аудирование</h3>
+          <p class="text-xs font-bold text-gray-400">Слушайте реплики носителей и повторяйте вслух для отработки интонации</p>
+        </div>
+        <button onclick="playFullDialogue()" class="btn-duo-blue px-4 py-2 rounded-xl font-black text-xs uppercase flex items-center space-x-2">
+          <i class="fa-solid fa-play"></i>
+          <span>Озвучить весь диалог</span>
+        </button>
+      </div>
+      <div class="space-y-4">
+        ${linesHtml}
+      </div>
+      <div class="flex justify-end pt-4">
+        <button onclick="switchModuleSubTab('quiz')" class="btn-duo-green px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-wider">
+          Перейти к большому тесту (18 вопросов) <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function playFullDialogue() {
+  const mod = MODULES.find(m => m.id === state.activeModuleId);
+  if (!mod) return;
+  const fullText = mod.dialogues.map(d => d.de).join(' ');
+  speakGerman(fullText);
+}
+
+// ============================================================================
+// 7. ГЕНЕРАТОР БОЛЬШОГО ТЕСТА (18 ВОПРОСОВ НА КАЖДЫЙ МОДУЛЬ)
+// ============================================================================
+function generateQuizForModule(mod) {
+  let questions = [];
+  // 1. Добавляем 8 авторских грамматических вопросов модуля
+  mod.grammarQuestions.forEach(gq => {
+    questions.push({ ...gq });
+  });
+
+  // 2. Динамически генерируем еще 10 лексико-грамматических вопросов из словаря урока (итого 18 вопросов!)
+  const vocabPool = [...mod.vocab];
+  vocabPool.slice(0, 6).forEach(item => {
+    // Генерируем 3 неверных варианта перевода из других слов
+    const wrongOptions = mod.vocab
+      .filter(v => v.ru !== item.ru)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 3)
+      .map(v => v.ru);
+    const allOptions = [...wrongOptions, item.ru].sort(() => 0.5 - Math.random());
+
+    questions.push({
+      type: "mc",
+      q: `Как переводится выражение: «${item.de}»?`,
+      options: allOptions,
+      a: item.ru,
+      exp: `Пример: ${item.ex}`
+    });
+  });
+
+  // 3. Добавляем 4 письменных задания (ввод немецкого слова по переводу)
+  vocabPool.slice(6, 10).forEach(item => {
+    // Очищаем словарную запись от форм мн. числа после запятой для удобства ввода
+    const cleanTarget = item.de.split(',')[0].replace(/\(.*?\)/g, '').trim();
+    questions.push({
+      type: "input",
+      q: `Напишите по-немецки (если существительное — с артиклем): «${item.ru}»`,
+      a: cleanTarget,
+      exp: `Полная словарная форма: ${item.de}. Пример: ${item.ex}`
+    });
+  });
+
+  state.quizQuestions = questions;
+  state.quizIndex = 0;
+  state.quizScore = 0;
+  state.quizAnswered = false;
+}
+
+function getQuizHTML(mod) {
+  if (state.quizIndex >= state.quizQuestions.length) {
+    const pct = Math.round((state.quizScore / state.quizQuestions.length) * 100);
+    return `
+      <div class="card-duo p-10 text-center space-y-6">
+        <div class="text-6xl">${pct >= 75 ? '🏆' : '💪'}</div>
+        <h3 class="text-3xl font-black text-gray-800">Тест завершен!</h3>
+        <p class="text-lg font-bold text-gray-600">Ваш результат: <span class="text-[#58cc02] font-black">${state.quizScore} из ${state.quizQuestions.length}</span> (${pct}%)</p>
+        <div class="flex justify-center space-x-4">
+          <button onclick="switchModuleSubTab('quiz')" class="btn-duo-blue px-6 py-3 rounded-2xl font-black text-sm uppercase">
+            Пройти еще раз
+          </button>
+          <button onclick="renderPathView()" class="btn-duo-green px-6 py-3 rounded-2xl font-black text-sm uppercase">
+            Вернуться к карте
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  const qObj = state.quizQuestions[state.quizIndex];
+  const progressPct = Math.round((state.quizIndex / state.quizQuestions.length) * 100);
+
+  let interactionHtml = '';
+  if (qObj.type === 'mc') {
+    interactionHtml = `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        ${qObj.options.map((opt, idx) => `
+          <button onclick="submitQuizAnswer('${opt.replace(/'/g, "\\'")}')" id="q-opt-${idx}" class="btn-duo-gray p-4 rounded-2xl font-extrabold text-left text-base flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center font-black text-xs shrink-0">${idx + 1}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
       </div>
     `;
   } else {
-    hearts = Math.max(0, hearts - 1);
-    updateStats();
-    alert('Неправильно! Попробуй еще раз.');
+    interactionHtml = `
+      <div class="mt-6 space-y-4">
+        <div class="flex flex-wrap gap-2">
+          ${['ä', 'ö', 'ü', 'ß', 'Ä', 'Ö', 'Ü'].map(ch => `
+            <button onclick="insertUmlaut('${ch}')" type="button" class="btn-duo-gray px-3.5 py-1.5 rounded-xl font-black text-sm">${ch}</button>
+          `).join('')}
+        </div>
+        <div class="flex space-x-3">
+          <input id="quiz-text-input" type="text" placeholder="Введите ответ на немецком..." class="flex-1 p-4 rounded-2xl border-2 border-gray-300 font-bold text-lg focus:outline-none focus:border-[#1cb0f6]" onkeydown="if(event.key==='Enter') submitQuizTextInput()">
+          <button onclick="submitQuizTextInput()" class="btn-duo-green px-6 rounded-2xl font-black uppercase text-sm">Проверить</button>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="card-duo p-8">
+      <!-- Прогресс-бар теста -->
+      <div class="flex items-center space-x-4 mb-6">
+        <div class="flex-1 bg-gray-200 h-4 rounded-full overflow-hidden">
+          <div class="bg-[#58cc02] h-full transition-all duration-300" style="width: ${progressPct}%"></div>
+        </div>
+        <span class="font-black text-xs text-gray-500 uppercase">${state.quizIndex + 1} / ${state.quizQuestions.length}</span>
+      </div>
+
+      <span class="text-xs font-black uppercase tracking-wider text-[#1cb0f6]">${qObj.type === 'mc' ? 'Выберите правильный ответ' : 'Письменное задание'}</span>
+      <h3 class="text-xl md:text-2xl font-black text-gray-800 mt-1">${qObj.q}</h3>
+
+      ${interactionHtml}
+
+      <!-- Блок обратной связи -->
+      <div id="quiz-feedback" class="hidden mt-6 p-5 rounded-2xl border-2"></div>
+    </div>
+  `;
+}
+
+function insertUmlaut(char) {
+  const input = document.getElementById('quiz-text-input');
+  if (!input) return;
+  input.value += char;
+  input.focus();
+}
+
+function submitQuizTextInput() {
+  const input = document.getElementById('quiz-text-input');
+  if (!input || !input.value.trim()) return;
+  submitQuizAnswer(input.value.trim());
+}
+
+function submitQuizAnswer(userAns) {
+  if (state.quizAnswered) return;
+  state.quizAnswered = true;
+
+  const qObj = state.quizQuestions[state.quizIndex];
+  const isCorrect = userAns.trim().toLowerCase() === qObj.a.trim().toLowerCase();
+  const fb = document.getElementById('quiz-feedback');
+  fb.classList.remove('hidden');
+
+  if (isCorrect) {
+    state.quizScore++;
+    state.xp += 10;
+    fb.className = "mt-6 p-5 rounded-2xl border-2 bg-green-50 border-[#58cc02] flex flex-col md:flex-row items-start md:items-center justify-between gap-4";
+    fb.innerHTML = `
+      <div>
+        <div class="font-black text-[#58a700] text-lg flex items-center space-x-2">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Отлично! Верный ответ (+10 XP)</span>
+        </div>
+        <p class="text-sm font-semibold text-green-800 mt-1">${qObj.exp}</p>
+      </div>
+      <button onclick="nextQuizQuestion()" class="btn-duo-green px-6 py-3 rounded-xl font-black text-xs uppercase shrink-0">Дальше</button>
+    `;
+  } else {
+    state.hearts = Math.max(0, state.hearts - 1);
+    fb.className = "mt-6 p-5 rounded-2xl border-2 bg-red-50 border-red-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-4";
+    fb.innerHTML = `
+      <div>
+        <div class="font-black text-red-600 text-lg flex items-center space-x-2">
+          <i class="fa-solid fa-circle-xmark"></i>
+          <span>Правильный ответ: ${qObj.a}</span>
+        </div>
+        <p class="text-sm font-semibold text-red-800 mt-1">${qObj.exp}</p>
+      </div>
+      <button onclick="nextQuizQuestion()" class="btn-duo-blue px-6 py-3 rounded-xl font-black text-xs uppercase shrink-0">Понятно, дальше</button>
+    `;
+  }
+  saveState();
+}
+
+function nextQuizQuestion() {
+  state.quizIndex++;
+  state.quizAnswered = false;
+  if (state.quizIndex >= state.quizQuestions.length) {
+    if (!state.completedModules.includes(state.activeModuleId)) {
+      state.completedModules.push(state.activeModuleId);
+      state.xp += 50;
+      saveState();
+    }
+  }
+  renderModuleScreen();
+}
+
+// ============================================================================
+// 8. ЭКРАН 2: ТРЕНАЖЕР СИЛЬНЫХ И НЕПРАВИЛЬНЫХ ГЛАГОЛОВ (ТАБЛИЦА + БЛИЦ-ТЕСТ)
+// ============================================================================
+let verbQuizTarget = null;
+
+function renderVerbsView() {
+  const container = document.getElementById('main-container');
+  verbQuizTarget = STRONG_VERBS[Math.floor(Math.random() * STRONG_VERBS.length)];
+
+  let rowsHtml = STRONG_VERBS.map(v => `
+    <tr class="hover:bg-gray-50">
+      <td class="p-3 font-black text-gray-800">
+        <button onclick="speakGerman('${v.inf}, ${v.pres}, ${v.pret}, ${v.part}')" class="text-[#1cb0f6] mr-2"><i class="fa-solid fa-volume-high"></i></button>
+        ${v.inf}
+      </td>
+      <td class="p-3 font-bold text-blue-600">${v.pres}</td>
+      <td class="p-3 font-bold text-purple-600">${v.pret}</td>
+      <td class="p-3 font-bold text-green-600">${v.part}</td>
+      <td class="p-3 font-semibold text-gray-500">${v.ru}</td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="max-w-5xl mx-auto space-y-8">
+      <!-- Интерактивный тренажер 3 форм -->
+      <div class="card-duo p-6 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-xs font-black uppercase text-orange-600">Интерактивный тренажер</span>
+            <h2 class="text-2xl font-black text-gray-800">Впишите формы сильного глагола</h2>
+          </div>
+          <button onclick="renderVerbsView()" class="btn-duo-yellow px-4 py-2 rounded-xl font-black text-xs uppercase">Следующий глагол</button>
+        </div>
+
+        <div class="p-4 bg-white rounded-2xl border-2 border-orange-200 mb-4 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-gray-400">Глагол:</span>
+            <div class="text-2xl font-black text-gray-800">${verbQuizTarget.inf} — <span class="text-orange-600">${verbQuizTarget.ru}</span></div>
+          </div>
+          <button onclick="speakGerman('${verbQuizTarget.inf}')" class="btn-duo-gray px-4 py-2 rounded-xl font-bold text-sm">
+            <i class="fa-solid fa-volume-high text-[#1cb0f6]"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-black uppercase text-gray-500 mb-1">Präteritum (3 л. ед.ч. — er/sie/es):</label>
+            <input id="verb-in-pret" type="text" placeholder="Например: ging / sprach" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-black uppercase text-gray-500 mb-1">Perfekt (hat/ist + Partizip II):</label>
+            <input id="verb-in-part" type="text" placeholder="Например: ist gegangen" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex gap-1">
+            ${['ä', 'ö', 'ü', 'ß'].map(ch => `<button onclick="document.getElementById('verb-in-pret').value+='${ch}'" class="btn-duo-gray px-3 py-1 rounded-lg font-black text-xs">${ch}</button>`).join('')}
+          </div>
+          <button onclick="checkStrongVerbInput()" class="btn-duo-green px-6 py-2.5 rounded-xl font-black text-xs uppercase">Проверить формы</button>
+        </div>
+        <div id="verb-feedback" class="hidden mt-4 p-4 rounded-xl font-bold text-sm"></div>
+      </div>
+
+      <!-- Полная таблица 35 глаголов с поиском -->
+      <div class="card-duo p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+          <h3 class="text-xl font-black text-gray-800">Таблица 35 важнейших сильных и неправильных глаголов</h3>
+          <input id="verb-search" oninput="filterVerbTable()" type="text" placeholder="Поиск по-немецки или по-русски..." class="p-2.5 rounded-xl border-2 border-gray-200 font-bold text-sm w-full md:w-72">
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Infinitiv</th>
+                <th class="p-3">Präsens (er/sie/es)</th>
+                <th class="p-3">Präteritum</th>
+                <th class="p-3">Perfekt (Partizip II)</th>
+                <th class="p-3">Перевод</th>
+              </tr>
+            </thead>
+            <tbody id="verb-table-body" class="divide-y divide-gray-200 text-sm">
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function checkStrongVerbInput() {
+  const pretIn = document.getElementById('verb-in-pret').value.trim().toLowerCase();
+  const partIn = document.getElementById('verb-in-part').value.trim().toLowerCase();
+  const fb = document.getElementById('verb-feedback');
+  fb.classList.remove('hidden');
+
+  const okPret = pretIn === verbQuizTarget.pret.toLowerCase();
+  const okPart = partIn === verbQuizTarget.part.toLowerCase() || partIn === verbQuizTarget.part.split(' ')[1]?.toLowerCase();
+
+  if (okPret && okPart) {
+    state.xp += 15;
+    saveState();
+    fb.className = "mt-4 p-4 rounded-xl font-bold text-sm bg-green-100 text-green-800";
+    fb.innerHTML = `✅ Безупречно! <b>${verbQuizTarget.inf} — ${verbQuizTarget.pres} — ${verbQuizTarget.pret} — ${verbQuizTarget.part}</b> (+15 XP)`;
+    speakGerman(`${verbQuizTarget.inf}, ${verbQuizTarget.pret}, ${verbQuizTarget.part}`);
+  } else {
+    fb.className = "mt-4 p-4 rounded-xl font-bold text-sm bg-red-100 text-red-800";
+    fb.innerHTML = `❌ Правильные формы: Präteritum — <b>${verbQuizTarget.pret}</b> | Perfekt — <b>${verbQuizTarget.part}</b>`;
   }
 }
 
-function speak(text) {
-  if ('speechSynthesis' in window) {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'de-DE';
-    window.speechSynthesis.speak(u);
-  }
+function filterVerbTable() {
+  const q = document.getElementById('verb-search').value.toLowerCase();
+  const filtered = STRONG_VERBS.filter(v =>
+    v.inf.toLowerCase().includes(q) ||
+    v.pret.toLowerCase().includes(q) ||
+    v.part.toLowerCase().includes(q) ||
+    v.ru.toLowerCase().includes(q)
+  );
+  document.getElementById('verb-table-body').innerHTML = filtered.map(v => `
+    <tr class="hover:bg-gray-50">
+      <td class="p-3 font-black text-gray-800">
+        <button onclick="speakGerman('${v.inf}, ${v.pres}, ${v.pret}, ${v.part}')" class="text-[#1cb0f6] mr-2"><i class="fa-solid fa-volume-high"></i></button>
+        ${v.inf}
+      </td>
+      <td class="p-3 font-bold text-blue-600">${v.pres}</td>
+      <td class="p-3 font-bold text-purple-600">${v.pret}</td>
+      <td class="p-3 font-bold text-green-600">${v.part}</td>
+      <td class="p-3 font-semibold text-gray-500">${v.ru}</td>
+    </tr>
+  `).join('');
 }
 
-function updateStats() {
-  document.getElementById('stat-xp').innerText = xp;
-  document.getElementById('stat-hearts').innerText = hearts;
-  document.getElementById('stat-streak').innerText = streak;
-  const percent = Math.round((completedModules.length / MODULES.length) * 100);
-  document.getElementById('sidebar-progress-bar').style.width = percent + '%';
-  document.getElementById('sidebar-completed-text').innerText = `${completedModules.length} из ${MODULES.length} тем`;
+// ============================================================================
+// 9. ЭКРАН 3: ПОЛНЫЙ СПРАВОЧНИК ТАБЛИЦ (ВСЕ ПАДЕЖИ, ВРЕМЕНА, KONJUNKTIV I/II)
+// ============================================================================
+function renderGrammarRefView() {
+  const container = document.getElementById('main-container');
+  container.innerHTML = `
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div>
+        <h1 class="text-3xl font-black text-gray-800">Сводный грамматический справочник (A1–B2)</h1>
+        <p class="text-gray-500 font-semibold">Все ключевые шпаргалки: склонение артиклей, местоимений, 6 временных форм и Konjunktiv I/II</p>
+      </div>
+
+      <!-- 1. Все 4 падежа -->
+      <div class="card-duo p-6">
+        <h3 class="text-xl font-black text-gray-800 mb-4">1. Склонение определенного и неопределенного артиклей во всех 4 падежах</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm font-semibold">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Падеж</th>
+                <th class="p-3">Мужской (Maskulinum)</th>
+                <th class="p-3">Женский (Femininum)</th>
+                <th class="p-3">Средний (Neutrum)</th>
+                <th class="p-3">Множ. ч. (Plural)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr><td class="p-3 font-black text-blue-600">Nominativ (Кто? Что?)</td><td class="p-3">der / ein</td><td class="p-3">die / eine</td><td class="p-3">das / ein</td><td class="p-3">die / keine</td></tr>
+              <tr><td class="p-3 font-black text-red-600">Akkusativ (Кого? Что?)</td><td class="p-3 font-black text-red-600">den / einen</td><td class="p-3">die / eine</td><td class="p-3">das / ein</td><td class="p-3">die / keine</td></tr>
+              <tr><td class="p-3 font-black text-amber-600">Dativ (Кому? Где?)</td><td class="p-3 font-black text-amber-600">dem / einem</td><td class="p-3 font-black text-amber-600">der / einer</td><td class="p-3 font-black text-amber-600">dem / einem</td><td class="p-3 font-black text-amber-600">den (+n) / keinen</td></tr>
+              <tr><td class="p-3 font-black text-purple-600">Genitiv (Чей? Кого?)</td><td class="p-3 font-black text-purple-600">des / eines (+s/es)</td><td class="p-3 font-black text-purple-600">der / einer</td><td class="p-3 font-black text-purple-600">des / eines (+s/es)</td><td class="p-3 font-black text-purple-600">der / keiner</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. Обзор всех времен немецкого глагола -->
+      <div class="card-duo p-6">
+        <h3 class="text-xl font-black text-gray-800 mb-4">2. Все времена немецкого языка (Активный и Пассивный залог)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm font-semibold">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Время</th>
+                <th class="p-3">Формула (Aktiv)</th>
+                <th class="p-3">Пример (Aktiv)</th>
+                <th class="p-3">Пример (Passiv)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr><td class="p-3 font-black">Präsens (Настоящее)</td><td class="p-3">Основа + личное окончание</td><td class="p-3">Er <b>baut</b> das Haus.</td><td class="p-3">Das Haus <b>wird gebaut</b>.</td></tr>
+              <tr><td class="p-3 font-black">Präteritum (Прошедшее письм.)</td><td class="p-3">2-я форма глагола</td><td class="p-3">Er <b>baute</b> das Haus.</td><td class="p-3">Das Haus <b>wurde gebaut</b>.</td></tr>
+              <tr><td class="p-3 font-black">Perfekt (Прошедшее разг.)</td><td class="p-3">haben/sein + Partizip II</td><td class="p-3">Er <b>hat</b> das Haus <b>gebaut</b>.</td><td class="p-3">Das Haus <b>ist gebaut worden</b>.</td></tr>
+              <tr><td class="p-3 font-black">Plusquamperfekt (Предпрошедшее)</td><td class="p-3">hatte/war + Partizip II</td><td class="p-3">Er <b>hatte</b> das Haus <b>gebaut</b>.</td><td class="p-3">Das Haus <b>war gebaut worden</b>.</td></tr>
+              <tr><td class="p-3 font-black">Futur I (Будущее)</td><td class="p-3">werden + Infinitiv</td><td class="p-3">Er <b>wird</b> das Haus <b>bauen</b>.</td><td class="p-3">Das Haus <b>wird gebaut werden</b>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. Сравнение Konjunktiv I и Konjunktiv II -->
+      <div class="card-duo p-6">
+        <h3 class="text-xl font-black text-gray-800 mb-4">3. Шпаргалка по Konjunktiv I и Konjunktiv II</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-4 rounded-2xl bg-pink-50 border-2 border-pink-200">
+            <h4 class="font-black text-pink-800 mb-2">Konjunktiv II (Нереальность, Вежливость, Условия)</h4>
+            <ul class="text-sm space-y-2 text-pink-900 font-semibold">
+              <li>• <b>Настоящее время:</b> <i>wäre</i> (был бы), <i>hätte</i> (имел бы), <i>würde + Infinitiv</i> (сделал бы), <i>könnte / müsste / sollte</i>.</li>
+              <li>• <b>Прошедшее время (сожаление):</b> только <i>hätte / wäre + Partizip II</i> (<i>Hätte ich das gewusst!</i>).</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200">
+            <h4 class="font-black text-emerald-800 mb-2">Konjunktiv I (Косвенная речь в СМИ и отчетах)</h4>
+            <ul class="text-sm space-y-2 text-emerald-900 font-semibold">
+              <li>• <b>Ключевые формы 3-го лица (er/sie/es):</b> <i>er sei</i> (он якобы есть), <i>er habe</i> (у него якобы есть), <i>er komme, er könne, er müsse</i>.</li>
+              <li>• <b>Прошедшее в косвенной речи:</b> <i>er habe gemacht / er sei gegangen</i>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
-window.onload = function() {
-  renderPath();
-  updateStats();
-};
+// ============================================================================
+// 10. ЭКРАН 4: ИНТЕРАКТИВНЫЙ ТРЕНАЖЕР ФОНЕТИКИ И ПРАВИЛ ЧТЕНИЯ
+// ============================================================================
+function renderPhoneticsView() {
+  const rules = [
+    { comb: "ei / ai", sound: "[ай]", ex: "mein, eins, arbeiten, Mai", desc: "Всегда читается как русский дифтонг «АЙ»." },
+    { comb: "ie", sound: "[и:] (долгий)", ex: "Sie, Liebe, vier, spielen", desc: "Буква e после i не читается, а лишь удлиняет звук [И]." },
+    { comb: "eu / äu", sound: "[ой]", ex: "heute, Deutsch, neun, Häuser", desc: "Сочетания eu и äu всегда произносятся как «ОЙ»." },
+    { comb: "sch", sound: "[ш]", ex: "Schule, schön, Tisch, schreiben", desc: "Три буквы передают один мягкий звук [Ш]." },
+    { comb: "sp / st (в начале)", sound: "[шп] / [шт]", ex: "sprechen, Sport, Straße, Student", desc: "В начале слова или корня s перед p/t читается как [Ш]." },
+    { comb: "ch (ich-Laut / ach-Laut)", sound: "[хь] / [х]", ex: "ich, mich, Buch, machen, Nacht", desc: "После a, o, u, au — твердый [Х]. После остальных гласных — мягкий [ХЬ]." },
+    { comb: "tsch", sound: "[ч]", ex: "Deutsch, Tschüss, Kutsche", desc: "Четыре буквы передают звук [Ч]." },
+    { comb: "v (Fau)", sound: "[ф] (в нем. словах)", ex: "Vater, vier, verstehen, viel", desc: "В исконно немецких словах читается как [Ф], в заимствованных (Vase) — как [В]." },
+    { comb: "z (Zett)", sound: "[ц]", ex: "Zeit, zehn, Zimmer, zusammen", desc: "Всегда читается твердо как [Ц]." },
+    { comb: "s (перед гласной)", sound: "[з]", ex: "sehen, sieben, Sonne, sagen", desc: "Перед гласной в начале или середине слова озвончается до [З]." },
+    { comb: "ä / ö / ü (Umlaute)", sound: "[э] / [ё] / [ю]", ex: "Mädchen, schön, hören, fünf, über", desc: "Для ö и ü сложите губы трубочкой (как для О и У), но произнесите Э и И." },
+    { comb: "ß (Eszett)", sound: "[с] (глухой)", ex: "heißen, Straße, groß, Fuß", desc: "Заменяет удвоенную ss после долгих гласных и дифтонгов." }
+  ];
+
+  const container = document.getElementById('main-container');
+  container.innerHTML = `
+    <div class="max-w-5xl mx-auto space-y-6">
+      <div>
+        <h1 class="text-3xl font-black text-gray-800">Фонетика и Правила чтения</h1>
+        <p class="text-gray-500 font-semibold">Немецкий язык читается строго по правилам. Нажмите на любую карточку, чтобы услышать эталонное произношение.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${rules.map(r => `
+          <div onclick="speakGerman('${r.ex}')" class="card-duo p-5 cursor-pointer hover:border-[#1cb0f6] transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl font-black text-[#1cb0f6]">${r.comb}</span>
+                <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 font-black text-xs">${r.sound}</span>
+              </div>
+              <p class="text-xs font-semibold text-gray-500 mb-3">${r.desc}</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between">
+              <span class="font-extrabold text-sm text-gray-800">${r.ex}</span>
+              <i class="fa-solid fa-volume-high text-[#1cb0f6]"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// Инициализация при старте
+updateStatsUI();
+renderPathView();
 </script>
 </body>
 </html>
