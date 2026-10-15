@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeutschProfi — Полная интерактивная платформа немецкого языка (A1–B2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f7f7f7;
+      user-select: none;
+    }
+    /* Тактильные 3D-кнопки в стиле Duolingo */
+    .btn-duo-green {
+      background-color: #58cc02;
+      box-shadow: 0 4px 0 #58a700;
+      color: white;
+      transition: all 0.1s;
+    }
+    .btn-duo-green:hover { background-color: #61e002; }
+    .btn-duo-green:active { transform: translateY(4px); box-shadow: 0 0px 0 #58a700; }
+
+    .btn-duo-blue {
+      background-color: #1cb0f6;
+      box-shadow: 0 4px 0 #1899d6;
+      color: white;
+      transition: all 0.1s;
+    }
+    .btn-duo-blue:hover { background-color: #2bd5ff; }
+    .btn-duo-blue:active { transform: translateY(4px); box-shadow: 0 0px 0 #1899d6; }
+
+    .btn-duo-yellow {
+      background-color: #ffc800;
+      box-shadow: 0 4px 0 #e5a400;
+      color: #4b4b4b;
+      transition: all 0.1s;
+    }
+    .btn-duo-yellow:hover { background-color: #ffd426; }
+    .btn-duo-yellow:active { transform: translateY(4px); box-shadow: 0 0px 0 #e5a400; }
+
+    .btn-duo-purple {
+      background-color: #ce82ff;
+      box-shadow: 0 4px 0 #a559d9;
+      color: white;
+      transition: all 0.1s;
+    }
+    .btn-duo-purple:active { transform: translateY(4px); box-shadow: 0 0px 0 #a559d9; }
+
+    .btn-duo-gray {
+      background-color: #ffffff;
+      border: 2px solid #e5e5e5;
+      box-shadow: 0 4px 0 #e5e5e5;
+      color: #4b4b4b;
+      transition: all 0.1s;
+    }
+    .btn-duo-gray:hover { background-color: #f7f7f7; border-color: #cecece; }
+    .btn-duo-gray:active { transform: translateY(4px); box-shadow: 0 0px 0 #e5e5e5; }
+
+    .card-duo {
+      background: white;
+      border: 2px solid #e5e5e5;
+      border-radius: 1.25rem;
+      box-shadow: 0 4px 0 #e5e5e5;
+    }
+
+    /* 3D Переворот флеш-карт */
+    .perspective { perspective: 1000px; }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 1.5rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="text-gray-800 h-screen flex overflow-hidden">
+
+  <!-- Боковая панель навигации -->
+  <aside class="w-64 bg-white border-r-2 border-gray-200 flex flex-col justify-between z-20 shrink-0">
+    <div>
+      <!-- Логотип -->
+      <div class="p-6 flex items-center space-x-3 border-b-2 border-gray-100">
+        <div class="w-11 h-11 rounded-2xl bg-[#58cc02] flex items-center justify-center text-white font-black text-2xl shadow-[0_4px_0_#58a700]">
+          🇩🇪
+        </div>
+        <div>
+          <span class="font-black text-2xl tracking-tight text-[#58cc02]">Deutsch</span><span class="font-black text-2xl tracking-tight text-gray-700">Profi</span>
+          <div class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Учебник A1 — B2</div>
+        </div>
+      </div>
+
+      <!-- Меню -->
+      <nav class="p-4 space-y-2">
+        <button onclick="switchTab('path')" id="nav-path" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider bg-blue-50 text-[#1cb0f6] border-2 border-[#1cb0f6]">
+          <i class="fa-solid fa-map-location-dot text-xl w-6 text-center"></i>
+          <span>Карта уроков (12)</span>
+        </button>
+        <button onclick="switchTab('verbs')" id="nav-verbs" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
+          <i class="fa-solid fa-dumbbell text-xl w-6 text-center text-orange-500"></i>
+          <span>Сильные глаголы</span>
+        </button>
+        <button onclick="switchTab('grammar')" id="nav-grammar" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
+          <i class="fa-solid fa-book-bookmark text-xl w-6 text-center text-purple-500"></i>
+          <span>Грамматика А-Я</span>
+        </button>
+        <button onclick="switchTab('phonetics')" id="nav-phonetics" class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl font-extrabold text-sm uppercase tracking-wider text-gray-500 hover:bg-gray-100 border-2 border-transparent">
+          <i class="fa-solid fa-volume-high text-xl w-6 text-center text-green-500"></i>
+          <span>Фонетика и Чтение</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Прогресс внизу сайдбара -->
+    <div class="p-4 m-4 bg-gray-50 rounded-2xl border-2 border-gray-200">
+      <div class="text-xs font-extrabold uppercase text-gray-400 mb-2">Прогресс учебника</div>
+      <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden mb-2">
+        <div id="sidebar-progress-bar" class="bg-[#58cc02] h-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+      <div class="flex justify-between items-center text-xs font-bold text-gray-600">
+        <span id="sidebar-completed-text">0 из 12 тем</span>
+        <button onclick="resetProgress()" class="text-red-400 hover:underline">Сбросить</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Основная рабочая область -->
+  <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <!-- Верхний бар со статистикой -->
+    <header class="h-16 bg-white border-b-2 border-gray-200 px-8 flex items-center justify-between shrink-0 z-10">
+      <div class="flex items-center space-x-2">
+        <button onclick="filterLevel('ALL')" id="lvl-ALL" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-gray-800 text-white">Все (12)</button>
+        <button onclick="filterLevel('A1')" id="lvl-A1" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-green-100 text-green-700 hover:bg-green-200">A1</button>
+        <button onclick="filterLevel('A2')" id="lvl-A2" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-amber-100 text-amber-700 hover:bg-amber-200">A2</button>
+        <button onclick="filterLevel('B1')" id="lvl-B1" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-purple-100 text-purple-700 hover:bg-purple-200">B1</button>
+        <button onclick="filterLevel('B2')" id="lvl-B2" class="px-3 py-1 rounded-lg font-black text-xs uppercase bg-pink-100 text-pink-700 hover:bg-pink-200">B2</button>
+      </div>
+
+      <div class="flex items-center space-x-6">
+        <!-- Ударный режим -->
+        <div class="flex items-center space-x-2 font-extrabold text-orange-500" title="Ударный режим (дни подряд)">
+          <i class="fa-solid fa-fire text-xl"></i>
+          <span id="stat-streak">5</span>
+        </div>
+        <!-- Очки опыта XP -->
+        <div class="flex items-center space-x-2 font-extrabold text-[#ffc800]" title="Очки опыта (XP)">
+          <i class="fa-solid fa-bolt text-xl"></i>
+          <span id="stat-xp">250</span><span>XP</span>
+        </div>
+        <!-- Жизни -->
+        <div class="flex items-center space-x-2 font-extrabold text-red-500" title="Запас сердец (нажмите для восстановления)" onclick="restoreHearts()">
+          <i class="fa-solid fa-heart text-xl cursor-pointer"></i>
+          <span id="stat-hearts">5</span>
+        </div>
+        <!-- Кнопка проверки звука -->
+        <button onclick="speakGerman('Willkommen bei DeutschProfi! Viel Erfolg beim Lernen!')" class="btn-duo-gray px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center space-x-2">
+          <i class="fa-solid fa-headphones text-[#1cb0f6]"></i>
+          <span>Проверка звука</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Контент вкладок -->
+    <main id="main-container" class="flex-1 overflow-y-auto p-6 md:p-10">
+      <!-- Рендерится динамически -->
+    </main>
+  </div>
+
+<script>
+// ============================================================================
+// 1. ПОЛНАЯ ПРОГРАММА ШКОЛЬНОГО И УНИВЕРСИТЕТСКОГО КУРСА (12 МОДУЛЕЙ: A1 -> B2)
+// ============================================================================
+const MODULES = [
+  // ======================= УРОВЕНЬ A1 =======================
+  {
+    id: "a1_1",
+    level: "A1",
+    title: "Урок 1: Знакомство, О себе, Спряжение в Präsens и глаголы sein / haben",
+    subtitle: "Приветствия, личные местоимения, числа, страны, профессии и железное правило V2",
+    color: "#58cc02",
+    icon: "fa-handshake",
+    grammarHTML: `
+      <div class="space-y-4">
+        <div class="bg-green-50 border-l-4 border-[#58cc02] p-4 rounded-r-xl">
+          <h4 class="font-black text-green-900 mb-1">1. Спряжение глаголов в настоящем времени (Präsens)</h4>
+          <p class="text-sm text-green-800">Убираем окончание инфинитива <b>-en</b> (<i>lern-en → lern-</i>) и добавляем личные окончания: <b>ich -e, du -st, er/sie/es -t, wir -en, ihr -t, sie/Sie -en</b>. Ключевые глаголы-связки <b>sein</b> (быть) и <b>haben</b> (иметь) нужно знать наизусть:</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse card-duo overflow-hidden text-sm font-semibold">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Лицо</th><th class="p-3">wohnen (жить)</th><th class="p-3">sprechen (e → i)</th><th class="p-3">sein (быть)</th><th class="p-3">haben (иметь)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">ich</td><td class="p-2.5">wohn<b>e</b></td><td class="p-2.5">sprech<b>e</b></td><td class="p-2.5 font-black">bin</td><td class="p-2.5 font-black">habe</td></tr>
+              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">du</td><td class="p-2.5">wohn<b>st</b></td><td class="p-2.5 text-red-600 font-black">sprichst</td><td class="p-2.5 font-black">bist</td><td class="p-2.5 font-black">hast</td></tr>
+              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">er/sie/es</td><td class="p-2.5">wohn<b>t</b></td><td class="p-2.5 text-red-600 font-black">spricht</td><td class="p-2.5 font-black">ist</td><td class="p-2.5 font-black">hat</td></tr>
+              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">wir</td><td class="p-2.5">wohn<b>en</b></td><td class="p-2.5">sprech<b>en</b></td><td class="p-2.5 font-black">sind</td><td class="p-2.5 font-black">haben</td></tr>
+              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">ihr</td><td class="p-2.5">wohn<b>t</b></td><td class="p-2.5">sprech<b>t</b></td><td class="p-2.5 font-black">seid</td><td class="p-2.5 font-black">habt</td></tr>
+              <tr><td class="p-2.5 font-bold text-[#1cb0f6]">sie / Sie</td><td class="p-2.5">wohn<b>en</b></td><td class="p-2.5">sprech<b>en</b></td><td class="p-2.5 font-black">sind</td><td class="p-2.5 font-black">haben</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bg-blue-50 border-l-4 border-[#1cb0f6] p-4 rounded-r-xl text-sm text-blue-900">
+          <b>2. Порядок слов (Правило V2):</b> В повествовательном предложении спрягаемый глагол <b>всегда стоит на 2-м месте</b>: <i>Ich <b>lerne</b> heute Deutsch</i> ИЛИ <i>Heute <b>lerne</b> ich Deutsch</i>. В вопросе без вопросительного слова глагол выходит на 1-е место: <i><b>Kommst</b> du aus Berlin?</i>
+        </div>
+      </div>
+    `,
+    vocab: [
+      { de: "heißen", ru: "зваться, называться", ex: "Wie heißen Sie? Ich heiße Markus." },
+      { de: "kommen", ru: "приходить, быть родом", ex: "Woher kommst du? Ich komme aus der Ukraine." },
+      { de: "wohnen", ru: "жить, проживать", ex: "Wir wohnen jetzt in München." },
+      { de: "sprechen", ru: "говорить, разговаривать", ex: "Er spricht fließend Deutsch und Englisch." },
+      { de: "arbeiten", ru: "работать", ex: "Meine Mutter arbeitet als Ärztin." },
+      { de: "studieren", ru: "учиться в вузе", ex: "Ich studiere Informatik an der Universität." },
+      { de: "verstehen", ru: "понимать", ex: "Verstehst du diese Frage?" },
+      { de: "der Vorname, -n", ru: "имя", ex: "Mein Vorname ist Alexander." },
+      { de: "der Familienname, -n", ru: "фамилия", ex: "Wie ist Ihr Familienname?" },
+      { de: "die Fremdsprache, -n", ru: "иностранный язык", ex: "Deutsch ist eine wichtige Fremdsprache." },
+      { de: "der Beruf, -e", ru: "профессия", ex: "Was sind Sie von Beruf?" },
+      { de: "die Adresse, -n", ru: "адрес", ex: "Kannst du mir deine Adresse sagen?" },
+      { de: "buchstabieren", ru: "произносить по буквам", ex: "Können Sie das bitte buchstabieren?" },
+      { de: "ledig", ru: "холостой, не замужем", ex: "Mein Bruder ist noch ledig." },
+      { de: "verheiratet", ru: "женат, замужем", ex: "Sind Sie verheiratet?" }
+    ],
+    dialogues: [
+      { speaker: "Anna", de: "Guten Tag! Ich heiße Anna Kovalenko. Und wie heißen Sie?", ru: "Добрый день! Меня зовут Анна Коваленко. А как зовут Вас?" },
+      { speaker: "Herr Weber", de: "Guten Tag! Mein Name ist Thomas Weber. Freut mich sehr!", ru: "Добрый день! Меня зовут Томас Вебер. Очень приятно!" },
+      { speaker: "Anna", de: "Woher kommen Sie, Herr Weber? Wohnen Sie hier in Berlin?", ru: "Откуда Вы родом, господин Вебер? Вы живете здесь в Берлине?" },
+      { speaker: "Herr Weber", de: "Ich komme aus der Schweiz, aus Zürich, aber ich arbeite jetzt in Berlin.", ru: "Я родом из Швейцарии, из Цюриха, но сейчас работаю в Берлине." },
+      { speaker: "Anna", de: "Interessant! Welche Sprachen sprechen Sie?", ru: "Интересно! На каких языках Вы говорите?" },
+      { speaker: "Herr Weber", de: "Ich spreche Deutsch, Französisch und ein bisschen Spanisch.", ru: "Я говорю по-немецки, по-французски и немного по-испански." }
+    ],
+    grammarQuestions: [
+      { type: "mc", q: "Выберите правильную форму глагола sein: «Ich ___ 22 Jahre alt.»", options: ["bin", "bist", "ist", "sind"], a: "bin", exp: "С местоимением ich глагол sein имеет форму bin." },
+      { type: "mc", q: "Выберите правильную форму: «Woher ___ du?»", options: ["komme", "kommst", "kommt", "kommen"], a: "kommst", exp: "Для местоимения du добавляется окончание -st." },
+      { type: "input", q: "Впишите правильную форму глагола haben: «Er ___ eine große Wohnung.»", a: "hat", exp: "В 3-м лице ед. числа (er/sie/es) глагол haben имеет форму hat." },
+      { type: "mc", q: "Глагол sprechen меняет корневую гласную e → i. Как сказать «Он говорит по-немецки»?", options: ["Er sprecht Deutsch", "Er spricht Deutsch", "Er sprechen Deutsch", "Er sprichst Deutsch"], a: "Er spricht Deutsch", exp: "В 3-м лице ед.ч. глагол sprechen меняет e на i: er spricht." },
+      { type: "input", q: "Впишите форму глагола sein: «___ ihr heute zu Hause?» (Вы сегодня дома?)", a: "Seid", exp: "С местоимением ihr (вы, мн.ч.) глагол sein имеет форму seid." },
+      { type: "mc", q: "Почему в глаголе arbeiten для du/er добавляется соединительная -e-?", options: ["Это сильный глагол", "Основа заканчивается на -t (du arbeitest, er arbeitet)", "Это исключение", "Это прошедшее время"], a: "Основа заканчивается на -t (du arbeitest, er arbeitet)", exp: "Если основа заканчивается на -t или -d, перед -st и -t добавляется -e- для благозвучия." },
+      { type: "mc", q: "Выберите предложение с правильным порядком слов (V2):", options: ["Heute ich arbeite in Berlin.", "Heute arbeite ich in Berlin.", "Ich heute arbeite in Berlin.", "In Berlin ich heute arbeite."], a: "Heute arbeite ich in Berlin.", exp: "Спрягаемый глагол arbeite обязан стоять на 2-м месте." },
+      { type: "input", q: "Впишите окончание глагола: «Wir lern___ zusammen Deutsch.» (впишите слово целиком)", a: "lernen", exp: "С местоимением wir глагол всегда имеет окончание -en: wir lernen." }
+    ]
+  },
+
+  {
+    id: "a1_2",
+    level: "A1",
+    title: "Урок 2: Семья, Еда, Покупки, Род и Винительный падеж (Akkusativ)",
+    subtitle: "Определенный/неопределенный артикли, отрицание kein и nicht, притяжательные местоимения",
+    color: "#38bdf8",
+    icon: "fa-cart-shopping",
+    grammarHTML: `
+      <div class="space-y-4">
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
+          <h4 class="font-black text-blue-900 mb-1">1. Винительный падеж (Akkusativ — Кого? Что?)</h4>
+          <p class="text-sm text-blue-800">Используется после переходных глаголов (<i>kaufen, haben, suchen, brauchen, essen, trinken, sehen, lieben</i>) и предлогов <b>für, durch, gegen, ohne, um</b>. В Akkusativ меняется <b>ТОЛЬКО мужской род</b>:</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse card-duo overflow-hidden text-sm font-semibold">
+            <thead>
+              <tr class="bg-gray-100 border-b-2 border-gray-200 text-xs font-black uppercase text-gray-600">
+                <th class="p-3">Род</th><th class="p-3">Nominativ (Кто? Что?)</th><th class="p-3">Akkusativ (Кого? Что?)</th><th class="p-3">Пример в Akkusativ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr class="bg-red-50"><td class="p-2.5 font-black text-red-600">Мужской (Mask.)</td><td class="p-2.5">der / ein / kein / mein</td><td class="p-2.5 font-black text-red-600">den / einen / keinen / meinen</td><td class="p-2.5">Ich trinke <b>einen</b> Kaffee.</td></tr>
+              <tr><td class="p-2.5 font-bold text-pink-600">Женский (Fem.)</td><td class="p-2.5">die / eine / keine / meine</td><td class="p-2.5">die / eine / keine / meine</td><td class="p-2.5">Er sucht <b>seine</b> Tasche.</td></tr>
+              <tr><td class="p-2.5 font-bold text-green-600">Средний (Neut.)</td><td class="p-2.5">das / ein / kein / mein</td><td class="p-2.5">das / ein / kein / mein</td><td class="p-2.5">Wir kaufen <b>kein</b> Brot.</td></tr>
+              <tr><td class="p-2.5 font-bold text-purple-600">Множ. ч. (Pl.)</td><td class="p-2.5">die / — / keine / meine</td><td class="p-2.5">die / — / keine / meine</td><td class="p-2.5">Sie isst <b>die</b> Äpfel.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-sm text-amber-900">
+          <b>2. Правило отрицания kein vs. nicht:</b><br>
+          • <b>kein</b> отрицает ТОЛЬКО существительные, которые употребляются с неопределенным артиклем или без артикля: <i>Ich habe <b>keinen</b> Hunger. Das ist <b>keine</b> Suppe.</i><br>
+          • <b>nicht</b> отрицает глаголы, прилагательные, наречия и существительные с определенным/притяжательным артиклем: <i>Ich
